@@ -7,8 +7,8 @@ spring:
     cache: false
 
   datasource:
-    username: lucy
-    password: lucy102
+    username: lutong99
+    password: lutong99
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql:///community?serverTimezon=UTC
     type: com.alibaba.druid.pool.DruidDataSource
