@@ -5,3 +5,26 @@ server:
 spring:
   thymeleaf:
     cache: false
+
+  datasource:
+    username: lucy
+    password: lucy102
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///community?serverTimezon=UTC
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 6
+      max-active: 15
+      min-idle: 5
+      connect-timeout: 30000
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: org.example.newcoder.entity
+  configuration:
+    use-generated-keys: true
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    org.example.nowcoder: debug

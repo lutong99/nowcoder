@@ -20,7 +20,7 @@ public class HelloController {
 
     private AlphaService alphaService;
 
-    @Autowired
+//    @Autowired
     public void setAlphaService(AlphaService alphaService) {
         this.alphaService = alphaService;
     }

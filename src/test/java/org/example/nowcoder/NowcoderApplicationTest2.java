@@ -1,8 +1,7 @@
 package org.example.nowcoder;
 
-import org.example.nowcoder.dao.AlphaDao;
+import org.example.nowcoder.mapper.AlphaDao;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
