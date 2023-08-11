@@ -4,6 +4,7 @@ import org.example.nowcoder.NowcoderApplication;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.UserExample;
 import org.example.nowcoder.mapper.UserMapper;
+import org.example.nowcoder.util.CommunityUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,5 +43,11 @@ public class UserTest {
         userMapper.insert(user);
         System.out.println("user = " + user);
 
+    }
+
+    @Test
+    public void testMd5() {
+        String s = CommunityUtil.md5("123123 " + "e0e50");
+        System.out.println("s = " + s);
     }
 }

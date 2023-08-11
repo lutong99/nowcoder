@@ -45,6 +45,7 @@ pagehelper:
 community:
   path:
     domain: http://localhost:8080
+    upload: C:/usr/local/upload
   kaptcha:
     image:
       width: 100

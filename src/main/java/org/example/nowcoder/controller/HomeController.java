@@ -63,7 +63,7 @@ public class HomeController {
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(page);
         model.addAttribute("discussPostList", discussPostMapList);
         model.addAttribute("page", pageInfo);
-        return "/index";
+        return "index";
     }
 
 }

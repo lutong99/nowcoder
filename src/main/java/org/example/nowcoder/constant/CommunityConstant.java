@@ -17,7 +17,7 @@ public interface CommunityConstant {
     /*
     登陆超时时间
      */
-    int DEFAUTL_EXPIRED_SECONDS = 3600;
+    int DEFAULT_EXPIRED_SECONDS = 3600;
 
     int REMEMBER_EXPIRED_SECONDS = 3600 * 48;
 

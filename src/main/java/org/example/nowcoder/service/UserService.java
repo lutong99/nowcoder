@@ -26,4 +26,11 @@ public interface UserService {
     Map<String, Object> resetPassword(String email, String password);
 
     LoginTicket getLoginTicketByTicket(String ticket);
+
+    int updateHeader(Integer userId, String headerUrl);
+
+    /**
+     * @param password 加密后的密码
+     */
+    int updateUserPass(Integer userId, String password);
 }

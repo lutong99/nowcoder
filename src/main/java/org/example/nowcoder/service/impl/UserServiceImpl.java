@@ -2,6 +2,7 @@ package org.example.nowcoder.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.component.MailClient;
+import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.constant.LoginTicketConstant;
 import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.LoginTicket;
@@ -19,6 +20,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.*;
+
 
 @Service
 public class UserServiceImpl implements UserService, CommunityConstant, LoginTicketConstant, UserConstant {
@@ -144,7 +146,7 @@ public class UserServiceImpl implements UserService, CommunityConstant, LoginTic
         if (user.getStatus() == STATUS_ACTIVATED) {
             return ACTIVATE_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
-            user.setStatus(1);
+            user.setStatus(STATUS_ACTIVATED);
             userMapper.updateByPrimaryKeySelective(user);
             return ACTIVATE_SUCCESS;
         } else {
@@ -256,5 +258,21 @@ public class UserServiceImpl implements UserService, CommunityConstant, LoginTic
             return null;
         }
         return loginTickets.get(0);
+    }
+
+    @Override
+    public int updateHeader(Integer userId, String headerUrl) {
+        User user = new User();
+        user.setId(userId);
+        user.setHeaderUrl(headerUrl);
+        return userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    public int updateUserPass(Integer userId, String password) {
+        User user = new User();
+        user.setId(userId);
+        user.setPassword(password);
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 }

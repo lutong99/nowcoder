@@ -3,8 +3,8 @@ package org.example.nowcoder.controller;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.service.UserService;
-import org.example.nowcoder.util.CommunityConstant;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.example.nowcoder.entity.User;
 
@@ -37,12 +36,12 @@ public class LoginController implements CommunityConstant {
 
     @GetMapping("/register")
     public String registerPage() {
-        return "/site/register";
+        return "site/register";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "/site/login";
+        return "site/login";
     }
 
     @Autowired
@@ -58,12 +57,12 @@ public class LoginController implements CommunityConstant {
         if (registerMap == null || registerMap.isEmpty()) {
             model.addAttribute(OPERATE_RESULT_MSG, "您已经注册成功，我门已向您的邮箱发送了一封激活邮件，请尽快激活");
             model.addAttribute(OPERATE_RESULT_TARGET, "/index");
-            return "/site/operate-result";
+            return "site/operate-result";
         } else {
             model.addAttribute("usernameMsg", registerMap.get("usernameMsg"));
             model.addAttribute("emailMsg", registerMap.get("emailMsg"));
             model.addAttribute("passwordMsg", registerMap.get("passwordMsg"));
-            return "/site/register";
+            return "site/register";
         }
 
     }
@@ -82,7 +81,7 @@ public class LoginController implements CommunityConstant {
             model.addAttribute(OPERATE_RESULT_MSG, "激活失败，请确认您的激活链接是否正确");
             model.addAttribute(OPERATE_RESULT_TARGET, "/index");
         }
-        return "/site/operate-result";
+        return "site/operate-result";
     }
 
     @Autowired
@@ -112,16 +111,17 @@ public class LoginController implements CommunityConstant {
 
     @PostMapping("/login")
     public String login(Model model, HttpSession session, HttpServletResponse response,
-                        String username, String password, String code, Boolean remember) {
+                        String username, String password, String code, boolean remember) {
+        log.info("remember: {}", remember);
         // kaptcha
         String kaptcha = (String) session.getAttribute(CommunityConstant.KAPTCHA);
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equals(code)) {
             model.addAttribute("codeMsg", "验证码不正确！");
-            return "/site/login";
+            return "site/login";
         }
 
         // user info
-        int expiredSeconds = remember ? REMEMBER_EXPIRED_SECONDS : DEFAUTL_EXPIRED_SECONDS;
+        int expiredSeconds = remember ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS;
         Map<String, Object> map = userService.login(username, password, expiredSeconds);
         if (map.containsKey("ticket")) {
             Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
@@ -132,7 +132,7 @@ public class LoginController implements CommunityConstant {
         } else {
             model.addAttribute("usernameMsg", map.get("usernameMsg"));
             model.addAttribute("passwordMsg", map.get("passwordMsg"));
-            return "/site/login";
+            return "site/login";
         }
 
     }
@@ -146,7 +146,7 @@ public class LoginController implements CommunityConstant {
 
     @GetMapping("/forget")
     public String forgetPage() {
-        return "/site/forget";
+        return "site/forget";
     }
 
     @GetMapping("/getCode/{email}")
@@ -171,18 +171,18 @@ public class LoginController implements CommunityConstant {
         String verifyCode = (String) session.getAttribute("verifyCode");
         if (!StringUtils.equals(code, verifyCode)) {
             model.addAttribute("codeMsg", "验证码不正确或已失效");
-            return "/site/forget";
+            return "site/forget";
         }
 
         Map<String, Object> map = userService.resetPassword(email, password);
         if (map.containsKey("successMsg")) {
             model.addAttribute(OPERATE_RESULT_MSG, map.get("successMsg"));
             model.addAttribute(OPERATE_RESULT_TARGET, "/login");
-            return "/site/operate-result";
+            return "site/operate-result";
         } else {
             model.addAttribute("emailMsg", map.get("emailMsg"));
             model.addAttribute("passwordMsg", map.get("passwordMsg"));
-            return "/site/forget";
+            return "site/forget";
         }
     }
 }
