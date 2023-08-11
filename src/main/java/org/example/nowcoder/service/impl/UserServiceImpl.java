@@ -46,8 +46,8 @@ public class UserServiceImpl implements UserService, CommunityConstant, LoginTic
     }
 
     @Override
-    public User getUser(String userId) {
-        return userMapper.selectByPrimaryKey(NowcoderUtils.parseInt(userId, 0));
+    public User getUser(Integer userId) {
+        return userMapper.selectByPrimaryKey(userId);
     }
 
     @Override
@@ -242,5 +242,16 @@ public class UserServiceImpl implements UserService, CommunityConstant, LoginTic
         userMapper.updateByPrimaryKeySelective(userByEmail);
         map.put("successMsg", "密码重置成功");
         return map;
+    }
+
+    @Override
+    public LoginTicket getLoginTicketByTicket(String ticket) {
+        LoginTicketExample example = new LoginTicketExample();
+        example.createCriteria().andTicketEqualTo(ticket);
+        List<LoginTicket> loginTickets = loginTicketMapper.selectByExample(example);
+        if (loginTickets == null || loginTickets.size() == 0) {
+            return null;
+        }
+        return loginTickets.get(0);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    User getUser(String userId);
+    User getUser(Integer userId);
 
     Map<String, Object> register(User user);
 
@@ -24,4 +24,6 @@ public interface UserService {
     Map<String, Object> sendResetCode(String email);
 
     Map<String, Object> resetPassword(String email, String password);
+
+    LoginTicket getLoginTicketByTicket(String ticket);
 }
