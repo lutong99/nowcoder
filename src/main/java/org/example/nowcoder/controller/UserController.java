@@ -2,6 +2,7 @@ package org.example.nowcoder.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.User;
@@ -48,11 +49,13 @@ public class UserController implements CommunityConstant {
         this.userService = userService;
     }
 
+    @LoginRequired
     @GetMapping("/setting")
     public String settingPage() {
         return "site/setting";
     }
 
+    @LoginRequired
     @PostMapping("/upload")
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
@@ -106,6 +109,7 @@ public class UserController implements CommunityConstant {
         }
     }
 
+    @LoginRequired
     @PostMapping("/updatePassword")
     public String updatePassword(Model model, String password, String confirm) {
         if (StringUtils.isBlank(password) || StringUtils.isBlank(confirm)) {
