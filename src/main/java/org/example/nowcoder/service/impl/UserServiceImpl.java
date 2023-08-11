@@ -1,14 +1,14 @@
 package org.example.nowcoder.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.example.nowcoder.entity.LoginTicket;
+import org.example.nowcoder.entity.LoginTicketExample;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.UserExample;
+import org.example.nowcoder.mapper.LoginTicketMapper;
 import org.example.nowcoder.mapper.UserMapper;
 import org.example.nowcoder.service.UserService;
-import org.example.nowcoder.util.CommunityConstant;
-import org.example.nowcoder.util.CommunityUtil;
-import org.example.nowcoder.util.MailClient;
-import org.example.nowcoder.util.NowcoderUtils;
+import org.example.nowcoder.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,17 @@ import org.thymeleaf.context.Context;
 import java.util.*;
 
 @Service
-public class UserServiceImpl implements UserService, CommunityConstant {
+public class UserServiceImpl implements UserService, CommunityConstant, LoginTicketConstant, UserConstant {
 
     private UserMapper userMapper;
 
     private MailClient mailClient;
     private TemplateEngine templateEngine;
+    @Value("${community.path.domain}")
+    private String domain;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+    private LoginTicketMapper loginTicketMapper;
 
     @Autowired
     public void setMailClient(MailClient mailClient) {
@@ -34,12 +39,6 @@ public class UserServiceImpl implements UserService, CommunityConstant {
     public void setTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
     }
-
-    @Value("${community.path.domain}")
-    private String domain;
-
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
 
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
@@ -90,8 +89,8 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         // 注册用户
         user.setSalt(CommunityUtil.generateUUID().substring(0, 5));
         user.setPassword(CommunityUtil.md5(user.getPassword() + user.getSalt()));
-        user.setType(0);
-        user.setStatus(0);
+        user.setType(TYPE_NORMAL);
+        user.setStatus(STATUS_INACTIVATED);
         user.setActivationCode(CommunityUtil.generateUUID());
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(new Date());
@@ -139,7 +138,7 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         if (user == null) {
             return ACTIVATE_FAILURE;
         }
-        if (user.getStatus() == 1) {
+        if (user.getStatus() == STATUS_ACTIVATED) {
             return ACTIVATE_REPEAT;
         } else if (user.getActivationCode().equals(code)) {
             user.setStatus(1);
@@ -148,5 +147,100 @@ public class UserServiceImpl implements UserService, CommunityConstant {
         } else {
             return ACTIVATE_FAILURE;
         }
+    }
+
+    @Autowired
+    public void setLoginTicketMapper(LoginTicketMapper loginTicketMapper) {
+        this.loginTicketMapper = loginTicketMapper;
+    }
+
+    @Override
+    public Map<String, Object> login(String username, String password, int expiredSeconds) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "账号不能为空");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "用户密码不能为空");
+            return map;
+        }
+
+        User user = getUserByUsername(username);
+        if (user == null) {
+            map.put("usernameMsg", "用户不存在");
+            return map;
+        }
+        if (user.getStatus() == STATUS_INACTIVATED) {
+            map.put("usernameMsg", "该账号未激活");
+            return map;
+        }
+        if (!Objects.equals(CommunityUtil.md5(password + user.getSalt()), user.getPassword())) {
+            map.put("passwordMsg", "密码不正确");
+            return map;
+        }
+
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(VALID_STATUS);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
+        loginTicketMapper.insert(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+        return map;
+    }
+
+    @Override
+    public void logout(String ticket) {
+        LoginTicketExample example = new LoginTicketExample();
+        example.createCriteria().andTicketEqualTo(ticket);
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setTicket(ticket);
+        loginTicket.setStatus(INVALID_STATUS);
+        loginTicketMapper.updateByExampleSelective(loginTicket, example);
+
+    }
+
+    @Override
+    public Map<String, Object> sendResetCode(String email) {
+        Map<String, Object> map = new HashMap<>();
+        User userByEmail = getUserByEmail(email);
+        if (userByEmail == null) {
+            map.put("code", 300);
+            map.put("msg", "该邮箱未注册");
+        } else {
+            String code = CommunityUtil.generateRandomCode(6);
+            Context context = new Context();
+            context.setVariable("email", email);
+            context.setVariable("code", code);
+            String content = templateEngine.process("/mail/forget", context);
+            mailClient.sendMail(email, "重置密码", content);
+            map.put("code", 200);
+            map.put("msg", "验证码已发送");
+            map.put("verifyCode", code);
+        }
+        return map;
+
+    }
+
+    @Override
+    public Map<String, Object> resetPassword(String email, String password) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(email)) {
+            map.put("emailMsg", "邮箱格式不正确");
+            return map;
+        }
+
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码格式不正确");
+            return map;
+        }
+
+        User userByEmail = getUserByEmail(email);
+        userByEmail.setPassword(CommunityUtil.md5(password + userByEmail.getSalt()));
+        userMapper.updateByPrimaryKeySelective(userByEmail);
+        map.put("successMsg", "密码重置成功");
+        return map;
     }
 }

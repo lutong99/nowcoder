@@ -2,29 +2,38 @@ package org.example.nowcoder.controller;
 
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.CommunityConstant;
+import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.example.nowcoder.entity.User;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
 @Slf4j
 public class LoginController implements CommunityConstant {
+
+    private UserService userService;
+    private Producer kaptchaProducer;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     @GetMapping("/register")
     public String registerPage() {
@@ -35,8 +44,6 @@ public class LoginController implements CommunityConstant {
     public String login() {
         return "/site/login";
     }
-
-    private UserService userService;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -78,8 +85,6 @@ public class LoginController implements CommunityConstant {
         return "/site/operate-result";
     }
 
-    private Producer kaptchaProducer;
-
     @Autowired
     public void setKaptchaProducer(Producer kaptchaProducer) {
         this.kaptchaProducer = kaptchaProducer;
@@ -92,7 +97,7 @@ public class LoginController implements CommunityConstant {
         BufferedImage image = kaptchaProducer.createImage(text);
 
         // session saves kaptcha
-        httpSession.setAttribute("kaptcha", text);
+        httpSession.setAttribute(CommunityConstant.KAPTCHA, text);
 
         response.setContentType("image/png");
         try {
@@ -103,5 +108,81 @@ public class LoginController implements CommunityConstant {
             log.error("验证码响应失败{}", e.getMessage());
         }
 
+    }
+
+    @PostMapping("/login")
+    public String login(Model model, HttpSession session, HttpServletResponse response,
+                        String username, String password, String code, Boolean remember) {
+        // kaptcha
+        String kaptcha = (String) session.getAttribute(CommunityConstant.KAPTCHA);
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equals(code)) {
+            model.addAttribute("codeMsg", "验证码不正确！");
+            return "/site/login";
+        }
+
+        // user info
+        int expiredSeconds = remember ? REMEMBER_EXPIRED_SECONDS : DEFAUTL_EXPIRED_SECONDS;
+        Map<String, Object> map = userService.login(username, password, expiredSeconds);
+        if (map.containsKey("ticket")) {
+            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            cookie.setPath(contextPath);
+            cookie.setMaxAge(expiredSeconds);
+            response.addCookie(cookie);
+            return "redirect:/index";
+        } else {
+            model.addAttribute("usernameMsg", map.get("usernameMsg"));
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            return "/site/login";
+        }
+
+    }
+
+
+    @GetMapping("/logout")
+    public String logout(Model model, @CookieValue("ticket") String ticket) {
+        userService.logout(ticket);
+        return "redirect:/login";
+    }
+
+    @GetMapping("/forget")
+    public String forgetPage() {
+        return "/site/forget";
+    }
+
+    @GetMapping("/getCode/{email}")
+    @ResponseBody
+    public Map<String, Object> resetCode(@PathVariable("email") String email, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+        if (StringUtils.isBlank(email) || !CommunityUtil.isValidEmail(email)) {
+            map.put("code", 300);
+            map.put("msg", "邮箱格式不正确");
+            return map;
+        }
+        map = userService.sendResetCode(email);
+        if (map.containsKey("verifyCode")) {
+            session.setAttribute("verifyCode", map.get("verifyCode"));
+            map.remove("verifyCode");
+        }
+        return map;
+    }
+
+    @PostMapping("/reset")
+    public String resetPassword(Model model, HttpSession session, String email, String password, String code) {
+        String verifyCode = (String) session.getAttribute("verifyCode");
+        if (!StringUtils.equals(code, verifyCode)) {
+            model.addAttribute("codeMsg", "验证码不正确或已失效");
+            return "/site/forget";
+        }
+
+        Map<String, Object> map = userService.resetPassword(email, password);
+        if (map.containsKey("successMsg")) {
+            model.addAttribute(OPERATE_RESULT_MSG, map.get("successMsg"));
+            model.addAttribute(OPERATE_RESULT_TARGET, "/login");
+            return "/site/operate-result";
+        } else {
+            model.addAttribute("emailMsg", map.get("emailMsg"));
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            return "/site/forget";
+        }
     }
 }

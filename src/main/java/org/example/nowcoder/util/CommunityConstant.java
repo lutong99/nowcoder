@@ -12,4 +12,13 @@ public interface CommunityConstant {
 
     String OPERATE_RESULT_TARGET = "target";
 
+    String KAPTCHA = "kaptcha";
+
+    /*
+    登陆超时时间
+     */
+    int DEFAUTL_EXPIRED_SECONDS = 3600;
+
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 48;
+
 }
