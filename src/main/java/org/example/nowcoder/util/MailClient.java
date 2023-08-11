@@ -26,12 +26,17 @@ public class MailClient {
 
     public void sendMail(String to, String subject, String content) {
         try {
+
+            log.info("发送人 {}", from);
+            log.info("发送到 {}", to);
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
             helper.setFrom(from);
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);
+            javaMailSender.send(message);
+            log.info("邮件成功发送到 {}", to);
         } catch (MessagingException e) {
             log.error("发送邮件失败 :{}", e.getMessage());
         }
