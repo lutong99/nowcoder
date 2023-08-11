@@ -33,4 +33,14 @@ public class UserTest {
         User user = users.get(0);
         System.out.println("user = " + user);
     }
+
+    @Test
+    public void testInsertUser() {
+        User user = new User();UserMapper userMapper = applicationContext.getBean(UserMapper.class);
+
+        user.setUsername("Hello ");
+        userMapper.insert(user);
+        System.out.println("user = " + user);
+
+    }
 }

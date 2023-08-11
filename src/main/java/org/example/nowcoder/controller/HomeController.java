@@ -40,7 +40,7 @@ public class HomeController {
         this.discussPostService = discussPostService;
     }
 
-    @GetMapping("/index")
+    @GetMapping({"/index", "/"})
     public String indexPage(Model model,
                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
