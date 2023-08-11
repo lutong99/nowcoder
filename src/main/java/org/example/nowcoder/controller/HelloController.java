@@ -1,13 +1,16 @@
 package org.example.nowcoder.controller;
 
 import org.example.nowcoder.service.AlphaService;
+import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -18,7 +21,7 @@ public class HelloController {
 
     private AlphaService alphaService;
 
-//    @Autowired
+    //    @Autowired
     public void setAlphaService(AlphaService alphaService) {
         this.alphaService = alphaService;
     }
@@ -137,4 +140,38 @@ public class HelloController {
         return list;
     }
 
+    @GetMapping("/cookie/set")
+    @ResponseBody
+    public String setCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        cookie.setPath("/community/alpha");
+        cookie.setMaxAge(60 * 100);
+        response.addCookie(cookie);
+        return "Set Cookie";
+    }
+
+    @GetMapping("/cookie/get")
+    @ResponseBody
+    public String getCookie(@CookieValue("code") String code) {
+        System.out.println("code = " + code);
+        return "get Cookie";
+    }
+
+    @GetMapping("/session/set")
+    @ResponseBody
+    public String setSession(HttpSession session) {
+        session.setAttribute("id", 1);
+        session.setAttribute("name", "test");
+        return "set session";
+    }
+
+    @GetMapping("/session/get")
+    @ResponseBody
+    public String getSession(HttpSession session) {
+        Object id = session.getAttribute("id");
+        Object name = session.getAttribute("name");
+        System.out.println("name = " + name);
+        System.out.println("id = " + id);
+        return "set session";
+    }
 }

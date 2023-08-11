@@ -45,3 +45,16 @@ pagehelper:
 community:
   path:
     domain: http://localhost:8080
+  kaptcha:
+    image:
+      width: 100
+      height: 40
+    textproducer:
+      font:
+        size: 32
+        color: black
+      char:
+        string: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+        length: 4
+    noise:
+      impl: com.google.code.kaptcha.impl.NoNoise
