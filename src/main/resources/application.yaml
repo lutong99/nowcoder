@@ -8,7 +8,6 @@ spring:
 
   datasource:
     username: lutong99
-    password: lutong99
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql:///community?serverTimezon=UTC
     type: com.alibaba.druid.pool.DruidDataSource
@@ -17,6 +16,18 @@ spring:
       max-active: 15
       min-idle: 5
       connect-timeout: 30000
+  mail:
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+    host: smtp.aliyun.com
+    port: 465
+    username: lutong99@aliyun.com
+    protocol: smtp
+  config:
+    import: secret.config.yaml
 
 mybatis:
   mapper-locations: classpath:mappers/*.xml
