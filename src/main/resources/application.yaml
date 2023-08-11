@@ -25,6 +25,9 @@ mybatis:
     use-generated-keys: true
     map-underscore-to-camel-case: true
 
-logging:
-  level:
-    org.example.nowcoder: debug
+#logging:
+#  level:
+#    org.example.nowcoder: debug
+
+pagehelper:
+  reasonable: true

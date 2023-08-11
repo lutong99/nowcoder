@@ -3,6 +3,7 @@ package org.example.nowcoder.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.DiscussPostService;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/")
+@Slf4j
 public class HomeController {
 
     private UserService userService;
@@ -43,6 +45,8 @@ public class HomeController {
                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
+        log.debug("{} pageNum = {}", log.getName(), pageNum);
+        log.debug("{} pageSize = {}", log.getName(), pageSize);
         Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
         List<DiscussPost> discussPostList = discussPostService.getAll();
         List<Map<String, Object>> discussPostMapList = new ArrayList<>();
