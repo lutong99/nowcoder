@@ -1,4 +1,4 @@
-package org.example.nowcoder.util;
+package org.example.nowcoder.constant;
 
 public interface LoginTicketConstant {
     int VALID_STATUS = 0;

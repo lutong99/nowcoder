@@ -1,6 +1,6 @@
 package org.example.nowcoder.util;
 
-public class NowcoderUtils {
+public class NowcoderUtil {
 
     public static Integer parseInt(String value, Integer defaultValue) {
         try {

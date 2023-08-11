@@ -1,13 +1,11 @@
 package org.example.nowcoder.mail;
 
-import org.example.nowcoder.util.MailClient;
+import org.example.nowcoder.component.MailClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import javax.xml.transform.Templates;
 
 @SpringBootTest
 public class MailTests {

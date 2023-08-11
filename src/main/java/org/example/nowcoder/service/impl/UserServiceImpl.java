@@ -1,6 +1,9 @@
 package org.example.nowcoder.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.example.nowcoder.component.MailClient;
+import org.example.nowcoder.constant.LoginTicketConstant;
+import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.LoginTicket;
 import org.example.nowcoder.entity.LoginTicketExample;
 import org.example.nowcoder.entity.User;
