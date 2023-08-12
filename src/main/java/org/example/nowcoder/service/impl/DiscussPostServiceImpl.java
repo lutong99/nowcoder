@@ -1,7 +1,6 @@
 package org.example.nowcoder.service.impl;
 
 import org.example.nowcoder.component.SensitiveFilter;
-import org.example.nowcoder.constant.DiscussPostConstant;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.DiscussPostExample;
 import org.example.nowcoder.mapper.DiscussPostMapper;

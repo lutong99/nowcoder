@@ -21,4 +21,10 @@ public interface CommunityConstant {
 
     int REMEMBER_EXPIRED_SECONDS = 3600 * 48;
 
+    String PAGE_SIZE_COMMENT = "5";
+
+    String PAGE_SIZE_POST = "10";
+
+    String PAGE_OFFSET = "1";
+
 }

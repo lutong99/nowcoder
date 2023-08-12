@@ -9,14 +9,11 @@ import org.example.nowcoder.mapper.DiscussPostMapper;
 import org.example.nowcoder.mapper.UserMapper;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;

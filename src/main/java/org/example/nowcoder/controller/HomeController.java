@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.DiscussPostService;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 @Slf4j
-public class HomeController {
+public class HomeController implements CommunityConstant {
 
     private UserService userService;
 
@@ -42,8 +43,8 @@ public class HomeController {
 
     @GetMapping({"/index", "/"})
     public String indexPage(Model model,
-                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                            @RequestParam(value = "pageNum", defaultValue = PAGE_OFFSET) Integer pageNum,
+                            @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE_POST) Integer pageSize
     ) {
         log.debug("{} pageNum = {}", log.getName(), pageNum);
         log.debug("{} pageSize = {}", log.getName(), pageSize);
@@ -54,8 +55,8 @@ public class HomeController {
 
     @GetMapping("/hot")
     public String indexHotPage(Model model,
-                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                               @RequestParam(value = "pageNum", defaultValue = PAGE_OFFSET) Integer pageNum,
+                               @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE_POST) Integer pageSize
     ) {
         log.debug("{} pageNum = {}", log.getName(), pageNum);
         log.debug("{} pageSize = {}", log.getName(), pageSize);

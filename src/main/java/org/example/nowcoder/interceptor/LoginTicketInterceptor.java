@@ -1,10 +1,10 @@
 package org.example.nowcoder.interceptor;
 
 import org.example.nowcoder.component.UserHostHolder;
+import org.example.nowcoder.constant.LoginTicketConstant;
 import org.example.nowcoder.entity.LoginTicket;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.UserService;
-import org.example.nowcoder.constant.LoginTicketConstant;
 import org.example.nowcoder.util.WebUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

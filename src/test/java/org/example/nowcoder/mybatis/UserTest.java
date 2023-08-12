@@ -1,9 +1,6 @@
 package org.example.nowcoder.mybatis;
 
 import org.example.nowcoder.NowcoderApplication;
-import org.example.nowcoder.entity.User;
-import org.example.nowcoder.entity.UserExample;
-import org.example.nowcoder.mapper.UserMapper;
 import org.example.nowcoder.util.CommunityUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

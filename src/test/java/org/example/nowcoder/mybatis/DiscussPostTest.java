@@ -1,9 +1,6 @@
 package org.example.nowcoder.mybatis;
 
 import org.example.nowcoder.NowcoderApplication;
-import org.example.nowcoder.entity.DiscussPost;
-import org.example.nowcoder.entity.DiscussPostExample;
-import org.example.nowcoder.mapper.DiscussPostMapper;
 import org.example.nowcoder.service.DiscussPostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,6 +4,7 @@ import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.example.nowcoder.entity.User;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Slf4j
