@@ -3,7 +3,7 @@ package org.example.nowcoder.mapper.impl;
 import org.example.nowcoder.mapper.AlphaDao;
 import org.springframework.stereotype.Repository;
 
-//@Repository
+@Repository
 public class AlphaDaoImpl implements AlphaDao {
 
     @Override
