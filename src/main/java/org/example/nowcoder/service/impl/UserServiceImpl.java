@@ -23,7 +23,7 @@ import java.util.*;
 
 
 @Service
-public class UserServiceImpl implements UserService, CommunityConstant, LoginTicketConstant, UserConstant {
+public class UserServiceImpl implements UserService {
 
     private UserMapper userMapper;
 

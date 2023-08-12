@@ -3,6 +3,7 @@ package org.example.nowcoder.util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -41,5 +42,4 @@ public class CommunityUtil {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-
 }

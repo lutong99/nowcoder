@@ -1,11 +1,15 @@
 package org.example.nowcoder.service;
 
+import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.constant.DiscussPostConstant;
+import org.example.nowcoder.constant.LoginTicketConstant;
+import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.LoginTicket;
 import org.example.nowcoder.entity.User;
 
 import java.util.Map;
 
-public interface UserService {
+public interface UserService extends CommunityConstant, LoginTicketConstant, UserConstant {
 
     User getUser(Integer userId);
 

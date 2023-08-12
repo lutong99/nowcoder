@@ -48,7 +48,23 @@ public class HomeController {
         log.debug("{} pageNum = {}", log.getName(), pageNum);
         log.debug("{} pageSize = {}", log.getName(), pageSize);
         Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
-        List<DiscussPost> discussPostList = discussPostService.getAll();
+        List<DiscussPost> discussPostList = discussPostService.getAllByTimeDesc();
+        return getString(model, page, discussPostList, "newest");
+    }
+
+    @GetMapping("/hot")
+    public String indexHotPage(Model model,
+                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        log.debug("{} pageNum = {}", log.getName(), pageNum);
+        log.debug("{} pageSize = {}", log.getName(), pageSize);
+        Page<DiscussPost> page = PageHelper.startPage(pageNum, pageSize);
+        List<DiscussPost> discussPostList = discussPostService.getAllByHotDesc();
+        return getString(model, page, discussPostList, "hot");
+    }
+
+    private String getString(Model model, Page<DiscussPost> page, List<DiscussPost> discussPostList, String tabName) {
         List<Map<String, Object>> discussPostMapList = new ArrayList<>();
         if (discussPostList != null) {
             for (DiscussPost discussPost : discussPostList) {
@@ -59,7 +75,7 @@ public class HomeController {
                 discussPostMapList.add(map);
             }
         }
-
+        model.addAttribute("tab", tabName);
         PageInfo<DiscussPost> pageInfo = new PageInfo<>(page);
         model.addAttribute("discussPostList", discussPostMapList);
         model.addAttribute("page", pageInfo);

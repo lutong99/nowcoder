@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>
+    <input type="button" value="发送" onclick="sendAjax();">
+</p>
+</body>
+
+<script src="../js/jquery-3.3.1.min.js"></script>
+<script>
+
+    function sendAjax() {
+        $.post(
+            '/community/alpha/ajax',
+            {'name': '孙行者', 'age': '325'},
+            function (data) {
+                console.log(typeof data)
+                console.log(data)
+                let json = data.data
+                console.log(json.name);
+                console.log(json.age);
+            }
+        )
+    }
+
+</script>
+</html>

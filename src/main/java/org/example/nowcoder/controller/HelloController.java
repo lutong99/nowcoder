@@ -1,5 +1,6 @@
 package org.example.nowcoder.controller;
 
+import org.example.nowcoder.entity.vo.ApiResponse;
 import org.example.nowcoder.service.AlphaService;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.stereotype.Controller;
@@ -173,5 +174,13 @@ public class HelloController {
         System.out.println("name = " + name);
         System.out.println("id = " + id);
         return "set session";
+    }
+
+    @PostMapping("/ajax")
+    @ResponseBody
+    public ApiResponse ajax(String name, String age) {
+        System.out.println("name = " + name);
+        System.out.println("age = " + age);
+        return ApiResponse.success().data("age", age).data("name", name);
     }
 }
