@@ -46,6 +46,9 @@ community:
   path:
     domain: http://localhost:8080
     upload: C:/usr/local/upload
+  sensitive:
+    file:
+      path: sensitive/words.copy.txt
   kaptcha:
     image:
       width: 100

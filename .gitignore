@@ -32,5 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
+### 涉及到密码
 src/main/resources/secret.config.yaml
+
+## 涉及到敏感词
+src/main/resources/sensitive/words.copy.txt
 
