@@ -9,4 +9,7 @@ public interface CommentConstant {
     int TARGET_ID_DEFAULT = 0;
 
 
+    int STATUS_DEFAULT = 0;
+
+
 }

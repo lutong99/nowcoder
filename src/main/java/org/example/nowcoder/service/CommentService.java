@@ -11,4 +11,6 @@ public interface CommentService extends CommentConstant {
 
     int getCountByEntity(Integer entityType, Integer entityId);
 
+    int addComment(Comment comment);
+
 }

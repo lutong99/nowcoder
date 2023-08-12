@@ -71,4 +71,12 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     public DiscussPost getById(Integer id) {
         return discussPostMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public int updateCommentCount(Integer id, Integer count) {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setId(id);
+        discussPost.setCommentCount(count);
+        return discussPostMapper.updateByPrimaryKeySelective(discussPost);
+    }
 }
