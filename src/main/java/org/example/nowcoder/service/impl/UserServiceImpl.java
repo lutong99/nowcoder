@@ -2,9 +2,6 @@ package org.example.nowcoder.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.component.MailClient;
-import org.example.nowcoder.constant.CommunityConstant;
-import org.example.nowcoder.constant.LoginTicketConstant;
-import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.LoginTicket;
 import org.example.nowcoder.entity.LoginTicketExample;
 import org.example.nowcoder.entity.User;
@@ -51,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Integer userId) {
+    public User getById(Integer userId) {
         return userMapper.selectByPrimaryKey(userId);
     }
 
@@ -79,13 +76,13 @@ public class UserServiceImpl implements UserService {
             return map;
         }
 
-        User userSelect = getUserByUsername(user.getUsername());
+        User userSelect = getByUsername(user.getUsername());
         if (userSelect != null) {
             map.put("usernameMsg", "该账号已存在");
             return map;
         }
 
-        userSelect = getUserByEmail(user.getEmail());
+        userSelect = getByEmail(user.getEmail());
         if (userSelect != null) {
             map.put("emailMsg", "该邮箱已存在");
             return map;
@@ -116,7 +113,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
+    public User getByUsername(String username) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUsernameEqualTo(username);
         List<User> users = userMapper.selectByExample(userExample);
@@ -127,7 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public User getByEmail(String email) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andEmailEqualTo(email);
         List<User> users = userMapper.selectByExample(userExample);
@@ -171,7 +168,7 @@ public class UserServiceImpl implements UserService {
             return map;
         }
 
-        User user = getUserByUsername(username);
+        User user = getByUsername(username);
         if (user == null) {
             map.put("usernameMsg", "用户不存在");
             return map;
@@ -210,7 +207,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String, Object> sendResetCode(String email) {
         Map<String, Object> map = new HashMap<>();
-        User userByEmail = getUserByEmail(email);
+        User userByEmail = getByEmail(email);
         if (userByEmail == null) {
             map.put("code", 300);
             map.put("msg", "该邮箱未注册");
@@ -242,7 +239,7 @@ public class UserServiceImpl implements UserService {
             return map;
         }
 
-        User userByEmail = getUserByEmail(email);
+        User userByEmail = getByEmail(email);
         userByEmail.setPassword(CommunityUtil.md5(password + userByEmail.getSalt()));
         userMapper.updateByPrimaryKeySelective(userByEmail);
         map.put("successMsg", "密码重置成功");

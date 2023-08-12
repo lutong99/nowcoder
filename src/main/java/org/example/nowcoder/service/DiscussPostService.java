@@ -16,4 +16,6 @@ public interface DiscussPostService extends DiscussPostConstant {
 
     int addDiscussPost(DiscussPost discussPost);
 
+    DiscussPost getById(Integer id);
+
 }

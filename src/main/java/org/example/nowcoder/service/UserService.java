@@ -1,7 +1,6 @@
 package org.example.nowcoder.service;
 
 import org.example.nowcoder.constant.CommunityConstant;
-import org.example.nowcoder.constant.DiscussPostConstant;
 import org.example.nowcoder.constant.LoginTicketConstant;
 import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.LoginTicket;
@@ -11,13 +10,13 @@ import java.util.Map;
 
 public interface UserService extends CommunityConstant, LoginTicketConstant, UserConstant {
 
-    User getUser(Integer userId);
+    User getById(Integer userId);
 
     Map<String, Object> register(User user);
 
-    User getUserByUsername(String username);
+    User getByUsername(String username);
 
-    User getUserByEmail(String email);
+    User getByEmail(String email);
 
     int activate(Integer userId, String code);
 

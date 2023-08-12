@@ -59,12 +59,17 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         discussPost.setTitle(HtmlUtils.htmlEscape(discussPost.getTitle()));
         discussPost.setContent(HtmlUtils.htmlEscape(discussPost.getContent()));
         discussPost.setTitle(sensitiveFilter.filter(discussPost.getTitle()));
-        discussPost.setContent(sensitiveFilter.filter(discussPost.getTitle()));
+        discussPost.setContent(sensitiveFilter.filter(discussPost.getContent()));
         discussPost.setType(TYPE_NORMAL);
         discussPost.setStatus(STATUS_NORMAL);
         discussPost.setCommentCount(COMMENT_COUNT_DEFAULT);
         discussPost.setScore(SCORE_DEFAULT);
 
         return discussPostMapper.insert(discussPost);
+    }
+
+    @Override
+    public DiscussPost getById(Integer id) {
+        return discussPostMapper.selectByPrimaryKey(id);
     }
 }
