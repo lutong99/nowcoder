@@ -88,7 +88,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">发私信</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -141,7 +141,7 @@
                             <strong class="mr-auto" th:utext="${messageMap.from.username}">落基山脉下的闲人</strong>
                             <small th:text="${#dates.format(messageMap.message.createTime, 'yyyy-MM-dd hh:mm:ss')}">2019-04-25
                                 15:49:32</small>
-                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <button type="button" class="ml-2 mb-1 close" th:message="${messageMap.message.id}" data-dismiss="toast" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>

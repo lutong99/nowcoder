@@ -29,5 +29,20 @@ function send_letter() {
 
 function delete_msg() {
     // TODO 删除数据
-    $(this).parents(".media").remove();
+    let messageId = $(this).attr('message')
+    $.post(
+        CONTEXT_PATH + '/message/hide',
+        {'messageId': messageId},
+        function (data) {
+            if (data.success) {
+                $(this).parents(".media").remove();
+            }
+            $("#hintBody").text(data.message)
+            $("#hintModal").modal("show");
+            setTimeout(function () {
+                $("#hintModal").modal("hide");
+                location.reload();
+            }, 2000);
+        }
+    );
 }

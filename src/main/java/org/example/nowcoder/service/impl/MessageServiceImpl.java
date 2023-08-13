@@ -110,4 +110,11 @@ public class MessageServiceImpl implements MessageService {
         return updateStatus(ids, STATUS_READ);
     }
 
+    @Override
+    public int deleteMessage(Integer messageId) {
+        Message message = new Message();
+        message.setStatus(STATUS_DELETED);
+        message.setId(messageId);
+        return messageMapper.updateByPrimaryKeySelective(message);
+    }
 }

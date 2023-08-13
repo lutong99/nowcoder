@@ -26,4 +26,5 @@ public interface MessageService extends MessageConstant {
 
     int readMessage(List<Integer> ids);
 
+    int deleteMessage(Integer messageId);
 }

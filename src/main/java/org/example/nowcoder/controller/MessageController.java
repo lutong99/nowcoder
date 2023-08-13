@@ -137,6 +137,17 @@ public class MessageController implements CommunityConstant, MessageConstant {
         return ApiResponse.success("发送私信成功");
     }
 
+    @PostMapping("/hide")
+    @ResponseBody
+    public ApiResponse deleteMessage(Integer messageId) {
+        if (messageId == null) {
+            log.info("messageId 不合法，messageId为空");
+            throw new IllegalArgumentException("请求的参数不合法");
+        }
+        messageService.deleteMessage(messageId);
+        return ApiResponse.success("删除私信成功！");
+    }
+
     /**
      * 获取当前conversation中的未读消息的所有id
      *
