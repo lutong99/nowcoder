@@ -43,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getLetters(String conversationId) {
+    public List<Message> getMessagesByConversationId(String conversationId) {
         MessageExample messageExample = new MessageExample();
         messageExample.setOrderByClause("id desc");
         messageExample.createCriteria().andStatusNotEqualTo(STATUS_DELETED).andFromIdNotEqualTo(FROM_ID_SYSTEM)
@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int getMessageCount(String conversationId) {
-        return getLetters(conversationId).size();
+        return getMessagesByConversationId(conversationId).size();
     }
 
     @Override

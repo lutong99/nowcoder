@@ -14,13 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -78,6 +76,48 @@ public class MessageController implements CommunityConstant {
         model.addAttribute("page", pageInfo);
         model.addAttribute("tab", "message");
         return "site/letter";
+
+    }
+
+    @GetMapping("/conversation/{conversationId}")
+    public String conversationDetail(Model model,
+                                     @PathVariable("conversationId") String conversationId,
+                                     @RequestParam(value = "num", defaultValue = PAGE_OFFSET) Integer pageNum,
+                                     @RequestParam(value = "size", defaultValue = PAGE_SIZE_MESSAGE) Integer pageSize
+    ) {
+
+        List<Map<String, Object>> messageMapList = new ArrayList<>();
+        Page<Message> messagePageHelper = PageHelper.startPage(pageNum, pageSize);
+        List<Message> messageList = messageService.getMessagesByConversationId(conversationId);
+        if (messageList != null) {
+            for (Message message : messageList) {
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("message", message);
+                messageMap.put("from", userService.getById(message.getFromId()));
+                messageMapList.add(messageMap);
+            }
+        }
+
+        PageInfo<Message> messagePageInfo = new PageInfo<>(messagePageHelper);
+        model.addAttribute("messageMapList", messageMapList);
+        User targetUser = getTargetUserByConversation(conversationId);
+        model.addAttribute("target", targetUser);
+        model.addAttribute("page", messagePageInfo);
+
+        return "site/letter-detail";
+    }
+
+    private User getTargetUserByConversation(String conversationId) {
+        User user = userHostHolder.getUser();
+        String[] userId = conversationId.split("_");
+        Integer userId0 = Integer.parseInt(userId[0]);
+        Integer userId1 = Integer.parseInt(userId[1]);
+
+        if (Objects.equals(user.getId(), userId0)) {
+            return userService.getById(userId1);
+        } else {
+            return userService.getById(userId0);
+        }
 
     }
 

@@ -11,7 +11,7 @@ public interface MessageService extends MessageConstant {
 
     int getConversationCount(Integer userId);
 
-    List<Message> getLetters(String conversationId);
+    List<Message> getMessagesByConversationId(String conversationId);
 
     int getMessageCount(String conversationId);
 

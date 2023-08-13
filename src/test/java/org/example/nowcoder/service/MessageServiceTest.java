@@ -34,7 +34,7 @@ class MessageServiceTest {
 
     @Test
     void getLetters() {
-        List<Message> letters = messageService.getLetters("111_112");
+        List<Message> letters = messageService.getMessagesByConversationId("111_112");
         letters.forEach(System.out::println);
     }
 
