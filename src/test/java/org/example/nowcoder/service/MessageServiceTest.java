@@ -20,10 +20,9 @@ class MessageServiceTest {
     @Test
     void getConversations() {
         List<Message> conversations = messageService.getConversations(111);
+        conversations.forEach(System.out::println);
         int size = conversations.size();
         System.out.println("size = " + size);
-
-
     }
 
     @Test

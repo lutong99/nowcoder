@@ -99,6 +99,11 @@ public interface MessageMapper {
 
     /**
      * 查询某个用户所对应的所有会话的最新的消息的id，用于会话列表
+     *
+     * @deprecated see {@link org.example.nowcoder.service.MessageService}
      */
+    @Deprecated
     List<Integer> getNewestMessageIds(Integer userId);
+
+    List<Message> getNewestConversationsList(Integer userId);
 }

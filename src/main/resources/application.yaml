@@ -7,7 +7,6 @@ spring:
     cache: false
 
   datasource:
-    username: lutong99
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql:///community?serverTimezon=UTC
     type: com.alibaba.druid.pool.DruidDataSource

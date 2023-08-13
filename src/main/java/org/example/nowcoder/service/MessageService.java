@@ -17,4 +17,13 @@ public interface MessageService extends MessageConstant {
 
     int getMessageUnreadCount(Integer userId, String conversationId);
 
+    /**
+     * 修改消息的状态
+     */
+    int updateStatus(List<Integer> ids, int status);
+
+    int addMessage(Message message);
+
+    int readMessage(List<Integer> ids);
+
 }
