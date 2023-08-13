@@ -81,7 +81,7 @@
         </filter>
     </appender>
 
-    <logger name="org.example.nowcoder" level="debug"/>
+    <logger name="org.example.nowcoder" level="warn"/>
 
     <root level="info">
         <appender-ref ref="FILE_ERROR"/>

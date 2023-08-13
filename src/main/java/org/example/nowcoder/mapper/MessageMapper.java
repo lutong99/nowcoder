@@ -96,4 +96,9 @@ public interface MessageMapper {
      * @mbggenerated Sat Aug 12 21:31:59 CST 2023
      */
     int updateByPrimaryKey(Message record);
+
+    /**
+     * 查询某个用户所对应的所有会话的最新的消息的id，用于会话列表
+     */
+    List<Integer> getNewestMessageIds(Integer userId);
 }

@@ -46,7 +46,7 @@ DROP TABLE IF EXISTS `discuss_post`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `discuss_post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` varchar(45) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
   `title` varchar(100) DEFAULT NULL,
   `content` text,
   `type` int(11) DEFAULT NULL COMMENT '0-普通; 1-置顶;',

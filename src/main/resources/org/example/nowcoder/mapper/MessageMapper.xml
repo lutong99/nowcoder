@@ -315,4 +315,15 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!--自定义查询 查询所有的-->
+  <select id="getNewestMessageIds" resultType="java.lang.Integer">
+        select max(id)
+        from message
+        where status != 2
+        and from_id != 1
+        and (from_id = #{userId} or to_id = #{userId})
+        group by conversation_id
+  </select>
+
 </mapper>

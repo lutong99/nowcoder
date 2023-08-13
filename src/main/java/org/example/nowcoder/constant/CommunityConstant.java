@@ -25,6 +25,8 @@ public interface CommunityConstant {
 
     String PAGE_SIZE_POST = "10";
 
+    String PAGE_SIZE_MESSAGE = "10";
+
     String PAGE_OFFSET = "1";
 
 }
