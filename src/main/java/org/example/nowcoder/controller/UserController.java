@@ -6,6 +6,7 @@ import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.User;
+import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class UserController implements CommunityConstant {
 
     private UserHostHolder userHostHolder;
     private UserService userService;
+    private LikeService likeService;
 
     @Autowired
     public void setUserHostHolder(UserHostHolder userHostHolder) {
@@ -49,6 +51,11 @@ public class UserController implements CommunityConstant {
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
     }
 
     @LoginRequired
@@ -93,9 +100,7 @@ public class UserController implements CommunityConstant {
             imageName = uploadPath + File.separator + imageName;
             String extension = imageName.substring(imageName.lastIndexOf("."));
             response.setContentType("image/" + extension);
-            try (ServletOutputStream outputStream = response.getOutputStream();
-                 FileInputStream fileInputStream = new FileInputStream(imageName);
-            ) {
+            try (ServletOutputStream outputStream = response.getOutputStream(); FileInputStream fileInputStream = new FileInputStream(imageName);) {
                 byte[] buffer = new byte[1024];
                 int len = 0;
                 while ((len = fileInputStream.read(buffer)) != -1) {
@@ -129,6 +134,20 @@ public class UserController implements CommunityConstant {
         model.addAttribute(OPERATE_RESULT_MSG, "密码更新成功");
         model.addAttribute(OPERATE_RESULT_TARGET, "/logout");
         return "site/operate-result";
+    }
+
+    @GetMapping({"/profile/{userId}", "/profile"})
+    public String profile(Model model, @PathVariable("userId") Integer userId) {
+        User profileUser;
+        if (userId == null) {
+            profileUser = userHostHolder.getUser();
+        } else {
+            profileUser = userService.getById(userId);
+        }
+        int likeCount = likeService.likeUserCount(profileUser.getId());
+        model.addAttribute("profile", profileUser);
+        model.addAttribute("likeCount", likeCount);
+        return "site/profile";
 
     }
 

@@ -98,7 +98,7 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
         List<Comment> postCommentList = commentService.getListByEntity(ENTITY_TYPE_POST, postId);
         Long likeCount = likeService.likeCount(ENTITY_TYPE_POST, postId);
         User user = userHostHolder.getUser();
-        int likeStatus = likeService.likeStatus(user.getId(), ENTITY_TYPE_POST, postId);
+        int likeStatus = user == null ? 0 : likeService.likeStatus(user.getId(), ENTITY_TYPE_POST, postId);
         model.addAttribute("likeCount", likeCount);
         model.addAttribute("likeStatus", likeStatus);
 
@@ -109,8 +109,8 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
                 postCommentMap.put("comment", postComment);
                 postCommentMap.put("user", userService.getById(postComment.getUserId()));
 //                User targetUser = postComment.getTargetId() != TARGET_ID_DEFAULT ? userService.getById(postComment.getUserId()) : null;
-                int likeStatusComment = likeService.likeStatus(user.getId(), postComment.getEntityType(), postComment.getId());
-                Long likeCountComment = likeService.likeCount(postComment.getEntityType(), postComment.getId());
+                int likeStatusComment = user == null ? 0 : likeService.likeStatus(user.getId(), ENTITY_TYPE_COMMENT, postComment.getId());
+                Long likeCountComment = likeService.likeCount(ENTITY_TYPE_COMMENT, postComment.getId());
                 postCommentMap.put("likeStatus", likeStatusComment);
                 postCommentMap.put("likeCount", likeCountComment);
                 List<Comment> replyCommentList = commentService.getListByEntity(ENTITY_TYPE_COMMENT, postComment.getId());
@@ -120,8 +120,8 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
                         Map<String, Object> replyCommentMap = new HashMap<>();
                         User target = replyComment.getTargetId() != TARGET_ID_DEFAULT ? userService.getById(replyComment.getTargetId()) : null;
                         User replyUser = userService.getById(replyComment.getUserId());
-                        int likeStatusReply = likeService.likeStatus(user.getId(), replyComment.getEntityType(), replyComment.getId());
-                        Long likeCountReply = likeService.likeCount(replyComment.getEntityType(), replyComment.getId());
+                        int likeStatusReply = user == null ? 0 : likeService.likeStatus(user.getId(), ENTITY_TYPE_COMMENT, replyComment.getId());
+                        Long likeCountReply = likeService.likeCount(ENTITY_TYPE_COMMENT, replyComment.getId());
                         replyCommentMap.put("likeStatus", likeStatusReply);
                         replyCommentMap.put("likeCount", likeCountReply);
                         replyCommentMap.put("comment", replyComment);

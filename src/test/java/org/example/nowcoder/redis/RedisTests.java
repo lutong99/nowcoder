@@ -46,8 +46,7 @@ public class RedisTests {
                 operations.multi();
                 BoundSetOperations boundSetOperations = operations.boundSetOps("test:trans");
                 boundSetOperations.add("张三", "李四", "王五", "吕布", "赵云");
-                Object exec = operations.exec();
-                return exec;
+                return operations.exec();
             }
         });
 

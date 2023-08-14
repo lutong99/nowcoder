@@ -1,8 +1,8 @@
-function like(button, entityType, entityId) {
+function like(button, entityType, entityId, entityUserId) {
 
     $.post(
         CONTEXT_PATH + "/like",
-        {"entityType": entityType, "entityId": entityId},
+        {"entityType": entityType, "entityId": entityId, "entityUserId": entityUserId},
         function (data) {
             if (data.success) {
                 console.log(data.data)

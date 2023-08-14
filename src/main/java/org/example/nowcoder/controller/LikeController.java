@@ -28,9 +28,9 @@ public class LikeController {
 
     @PostMapping("/like")
     @ResponseBody
-    public ApiResponse like(Integer entityType, Integer entityId) {
+    public ApiResponse like(Integer entityType, Integer entityId, Integer entityUserId) {
         User user = userHostHolder.getUser();
-        likeService.like(user.getId(), entityType, entityId);
+        likeService.like(user.getId(), entityType, entityId, entityUserId);
 
         Long likeCount = likeService.likeCount(entityType, entityId);
         int likeStatus = likeService.likeStatus(user.getId(), entityType, entityId);

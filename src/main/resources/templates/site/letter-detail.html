@@ -131,7 +131,7 @@
             <!-- 私信列表 -->
             <ul class="list-unstyled mt-4">
                 <li class="media pb-3 pt-3 mb-2" th:each="messageMap:${messageMapList}">
-                    <a href="profile.html">
+                    <a th:href="@{/user/profile/{userId}(userId=${messageMap.from.id})}">
                         <img src="http://images.nowcoder.com/head/8t.png"
                              th:src="${messageMap.from.headerUrl}"
                              class="mr-4 rounded-circle user-header" alt="用户头像">
