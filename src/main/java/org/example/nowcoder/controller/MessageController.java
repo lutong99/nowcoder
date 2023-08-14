@@ -85,7 +85,6 @@ public class MessageController implements CommunityConstant, MessageConstant {
                                      @RequestParam(value = "num", defaultValue = PAGE_OFFSET) Integer pageNum,
                                      @RequestParam(value = "size", defaultValue = PAGE_SIZE_MESSAGE) Integer pageSize
     ) {
-
         List<Map<String, Object>> messageMapList = new ArrayList<>();
         Page<Message> messagePageHelper = PageHelper.startPage(pageNum, pageSize);
         List<Message> messageList = messageService.getMessagesByConversationId(conversationId);
@@ -115,6 +114,7 @@ public class MessageController implements CommunityConstant, MessageConstant {
     @PostMapping("/send")
     @ResponseBody
     public ApiResponse sendMessage(String toName, String content) {
+
         User user = userHostHolder.getUser();
         User toUser = userService.getByUsername(toName);
         if (toUser == null) {

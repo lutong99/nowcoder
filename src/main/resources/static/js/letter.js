@@ -17,6 +17,7 @@ function send_letter() {
         {"toName": toName, "content": content},
         function (data) {
             $("#hintBody").text(data.message)
+            console.log(data.message);
             $("#hintModal").modal("show");
             setTimeout(function () {
                 $("#hintModal").modal("hide");

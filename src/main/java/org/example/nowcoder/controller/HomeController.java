@@ -83,4 +83,10 @@ public class HomeController implements CommunityConstant {
         return "index";
     }
 
+    @GetMapping("/error")
+    public String errorPage() {
+        return "error/500";
+    }
+
+
 }
