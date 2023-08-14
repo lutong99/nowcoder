@@ -4,10 +4,12 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.DiscussPostService;
+import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,12 +26,19 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 @Slf4j
-public class HomeController implements CommunityConstant {
+public class HomeController implements CommunityConstant, CommentConstant {
 
     private UserService userService;
 
 
     private DiscussPostService discussPostService;
+
+    private LikeService likeService;
+
+    @Autowired
+    public void setLikeService(LikeService likeService) {
+        this.likeService = likeService;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -73,6 +82,9 @@ public class HomeController implements CommunityConstant {
                 map.put("post", discussPost);
                 User user = userService.getById(discussPost.getUserId());
                 map.put("user", user);
+                Long likeCount = likeService.likeCount(ENTITY_TYPE_POST, discussPost.getId());
+                map.put("likeCount", likeCount);
+
                 discussPostMapList.add(map);
             }
         }
