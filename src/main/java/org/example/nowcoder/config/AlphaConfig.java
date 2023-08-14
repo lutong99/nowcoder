@@ -10,7 +10,7 @@ public class AlphaConfig {
 
     @Bean
     public SimpleDateFormat simpleDateFormat() {
-        return new SimpleDateFormat("yyyy年MM月dd日 hh点mm分ss秒");
+        return new SimpleDateFormat("yyyy年MM月dd日 HH点mm分ss秒");
     }
 
 }

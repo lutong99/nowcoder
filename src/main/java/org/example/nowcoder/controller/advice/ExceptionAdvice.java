@@ -28,7 +28,7 @@ public class ExceptionAdvice implements ExceptionAdviceConstant {
 
     @ExceptionHandler
     public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.error("服务器发生异常 {}", e.getMessage());
+        log.error("服务器发生异常 {} : {}", e, e.getMessage());
         for (StackTraceElement element : e.getStackTrace()) {
             log.error(element.toString());
         }

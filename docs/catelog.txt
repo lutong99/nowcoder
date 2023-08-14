@@ -6,3 +6,5 @@
 
 经过验证，SpringBoot 如果spring.datasource.username
 
+3、从localhost切换到127.0.0.1无限重定向问题 (cookies)
+

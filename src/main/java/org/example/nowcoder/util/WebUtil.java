@@ -13,9 +13,11 @@ public class WebUtil {
         }
 
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (name.equals(cookie.getName())) {
-                return cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (name.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
             }
         }
         return null;
