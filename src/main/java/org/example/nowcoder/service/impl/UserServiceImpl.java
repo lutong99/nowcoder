@@ -6,17 +6,19 @@ import org.example.nowcoder.entity.LoginTicket;
 import org.example.nowcoder.entity.LoginTicketExample;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.UserExample;
-import org.example.nowcoder.mapper.LoginTicketMapper;
 import org.example.nowcoder.mapper.UserMapper;
 import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.CommunityUtil;
+import org.example.nowcoder.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -30,7 +32,13 @@ public class UserServiceImpl implements UserService {
     private String domain;
     @Value("${server.servlet.context-path}")
     private String contextPath;
-    private LoginTicketMapper loginTicketMapper;
+    //    private LoginTicketMapper loginTicketMapper;
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Autowired
     public void setMailClient(MailClient mailClient) {
@@ -49,7 +57,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(Integer userId) {
-        return userMapper.selectByPrimaryKey(userId);
+        User cacheUser = getCacheUser(userId);
+        if (cacheUser == null) {
+            return initUserCache(userId);
+        }
+        return cacheUser;
     }
 
     @Override
@@ -94,7 +106,7 @@ public class UserServiceImpl implements UserService {
         user.setType(TYPE_NORMAL);
         user.setStatus(STATUS_INACTIVATED);
         user.setActivationCode(CommunityUtil.generateUUID());
-        user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
+        user.setHeaderUrl(String.format("https://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(new Date());
 
         userMapper.insert(user);
@@ -145,16 +157,17 @@ public class UserServiceImpl implements UserService {
         } else if (user.getActivationCode().equals(code)) {
             user.setStatus(STATUS_ACTIVATED);
             userMapper.updateByPrimaryKeySelective(user);
+            clearUserCache(userId);
             return ACTIVATE_SUCCESS;
         } else {
             return ACTIVATE_FAILURE;
         }
     }
 
-    @Autowired
-    public void setLoginTicketMapper(LoginTicketMapper loginTicketMapper) {
-        this.loginTicketMapper = loginTicketMapper;
-    }
+//    @Autowired
+//    public void setLoginTicketMapper(LoginTicketMapper loginTicketMapper) {
+//        this.loginTicketMapper = loginTicketMapper;
+//    }
 
     @Override
     public Map<String, Object> login(String username, String password, int expiredSeconds) {
@@ -187,7 +200,9 @@ public class UserServiceImpl implements UserService {
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(VALID_STATUS);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000L));
-        loginTicketMapper.insert(loginTicket);
+//        loginTicketMapper.insert(loginTicket);
+        String ticketRedisKey = RedisKeyUtil.getTicketKey(loginTicket.getTicket());
+        redisTemplate.opsForValue().set(ticketRedisKey, loginTicket);
 
         map.put("ticket", loginTicket.getTicket());
         return map;
@@ -196,12 +211,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout(String ticket) {
         LoginTicketExample example = new LoginTicketExample();
-        example.createCriteria().andTicketEqualTo(ticket);
-        LoginTicket loginTicket = new LoginTicket();
-        loginTicket.setTicket(ticket);
-        loginTicket.setStatus(INVALID_STATUS);
-        loginTicketMapper.updateByExampleSelective(loginTicket, example);
-
+//        example.createCriteria().andTicketEqualTo(ticket);
+//        LoginTicket loginTicket = new LoginTicket();
+//        loginTicket.setTicket(ticket);
+//        loginTicket.setStatus(INVALID_STATUS);
+//
+//        loginTicketMapper.updateByExampleSelective(loginTicket, example);
+        String ticketRedisKey = RedisKeyUtil.getTicketKey(ticket);
+        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(ticket);
+        if (loginTicket != null) {
+            loginTicket.setStatus(INVALID_STATUS);
+            redisTemplate.opsForValue().set(ticketRedisKey, loginTicket);
+        }
     }
 
     @Override
@@ -242,19 +263,23 @@ public class UserServiceImpl implements UserService {
         User userByEmail = getByEmail(email);
         userByEmail.setPassword(CommunityUtil.md5(password + userByEmail.getSalt()));
         userMapper.updateByPrimaryKeySelective(userByEmail);
+        clearUserCache(userByEmail.getId());
         map.put("successMsg", "密码重置成功");
         return map;
     }
 
     @Override
     public LoginTicket getLoginTicketByTicket(String ticket) {
-        LoginTicketExample example = new LoginTicketExample();
-        example.createCriteria().andTicketEqualTo(ticket);
-        List<LoginTicket> loginTickets = loginTicketMapper.selectByExample(example);
-        if (loginTickets == null || loginTickets.size() == 0) {
-            return null;
-        }
-        return loginTickets.get(0);
+//        LoginTicketExample example = new LoginTicketExample();
+//        example.createCriteria().andTicketEqualTo(ticket);
+//        List<LoginTicket> loginTickets = loginTicketMapper.selectByExample(example);
+//        if (loginTickets == null || loginTickets.size() == 0) {
+//            return null;
+//        }
+//        return loginTickets.get(0);
+        String ticketRedisKey = RedisKeyUtil.getTicketKey(ticket);
+        return (LoginTicket) redisTemplate.opsForValue().get(ticketRedisKey);
+
     }
 
     @Override
@@ -262,7 +287,9 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setId(userId);
         user.setHeaderUrl(headerUrl);
-        return userMapper.updateByPrimaryKeySelective(user);
+        int rows = userMapper.updateByPrimaryKeySelective(user);
+        clearUserCache(userId);
+        return rows;
     }
 
     @Override
@@ -270,6 +297,28 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setId(userId);
         user.setPassword(password);
-        return userMapper.updateByPrimaryKeySelective(user);
+        int rows = userMapper.updateByPrimaryKeySelective(user);
+        clearUserCache(userId);
+        return rows;
+    }
+
+    // 优先从缓存中取用户
+    private User getCacheUser(Integer userId) {
+        String redisUserKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(redisUserKey);
+    }
+
+    // 当缓存中没有时，初始化缓存
+    private User initUserCache(Integer userId) {
+        String redisUserKey = RedisKeyUtil.getUserKey(userId);
+        User user = userMapper.selectByPrimaryKey(userId);
+        redisTemplate.opsForValue().set(redisUserKey, user, 1, TimeUnit.HOURS);
+        return user;
+    }
+
+    // 当用户发生更新时，清除缓存
+    private void clearUserCache(Integer userId) {
+        String redisUserKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(redisUserKey);
     }
 }
