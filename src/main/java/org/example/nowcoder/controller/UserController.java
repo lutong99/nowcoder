@@ -4,8 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
+import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.User;
+import org.example.nowcoder.entity.vo.ApiResponse;
+import org.example.nowcoder.service.FollowService;
 import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.CommunityUtil;
@@ -13,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -28,7 +28,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/user")
 @Slf4j
-public class UserController implements CommunityConstant {
+public class UserController implements CommunityConstant, CommentConstant {
 
     @Value("${community.path.upload}")
     private String uploadPath;
@@ -42,6 +42,7 @@ public class UserController implements CommunityConstant {
     private UserHostHolder userHostHolder;
     private UserService userService;
     private LikeService likeService;
+    private FollowService followService;
 
     @Autowired
     public void setUserHostHolder(UserHostHolder userHostHolder) {
@@ -136,7 +137,8 @@ public class UserController implements CommunityConstant {
         return "site/operate-result";
     }
 
-    @GetMapping({"/profile/{userId}", "/profile"})
+    @GetMapping("/profile/{userId}")
+    @LoginRequired
     public String profile(Model model, @PathVariable("userId") Integer userId) {
         User profileUser;
         if (userId == null) {
@@ -145,10 +147,37 @@ public class UserController implements CommunityConstant {
             profileUser = userService.getById(userId);
         }
         int likeCount = likeService.likeUserCount(profileUser.getId());
+        Long followerCount = followService.followerCount(ENTITY_TYPE_USER, userId);
+        Long followeeCount = followService.followeeCount(userId, ENTITY_TYPE_USER);
+        boolean status = userHostHolder.getUser() != null && followService.followStatus(userHostHolder.getUser().getId(), ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followeeCount", followeeCount);
+        model.addAttribute("followStatus", status);
+
         model.addAttribute("profile", profileUser);
         model.addAttribute("likeCount", likeCount);
         return "site/profile";
 
+    }
+
+    @Autowired
+    public void setFollowService(FollowService followService) {
+        this.followService = followService;
+    }
+
+    @PostMapping("/follow")
+    @ResponseBody
+    @LoginRequired
+    public ApiResponse follow(Integer entityType, Integer entityId) {
+        User user = userHostHolder.getUser();
+        boolean status = followService.followStatus(user.getId(), entityType, entityId);
+        if (status) {
+            followService.unfollow(user.getId(), entityType, entityId);
+            return ApiResponse.failure();
+        } else {
+            followService.follow(user.getId(), entityType, entityId);
+            return ApiResponse.success();
+        }
     }
 
 }

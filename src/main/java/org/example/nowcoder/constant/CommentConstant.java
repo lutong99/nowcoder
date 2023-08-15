@@ -12,4 +12,7 @@ public interface CommentConstant {
     int STATUS_DEFAULT = 0;
 
 
+    Integer ENTITY_TYPE_USER = 3;
+
+
 }
