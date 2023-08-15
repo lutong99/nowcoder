@@ -79,4 +79,24 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         discussPost.setCommentCount(count);
         return discussPostMapper.updateByPrimaryKeySelective(discussPost);
     }
+
+    @Override
+    public List<DiscussPost> getAllByUserId(Integer userId) {
+
+        if (userId == null) {
+            throw new RuntimeException("传入的参数不正确, userId == null");
+        }
+
+        DiscussPostExample discussPostExample = new DiscussPostExample();
+        discussPostExample.setOrderByClause("create_time desc");
+        DiscussPostExample.Criteria criteria = discussPostExample.createCriteria().andUserIdEqualTo(userId);
+
+        return discussPostMapper.selectByExample(discussPostExample);
+
+    }
+
+    @Override
+    public int getPostCountByUserId(Integer userId) {
+        return getAllByUserId(userId).size();
+    }
 }

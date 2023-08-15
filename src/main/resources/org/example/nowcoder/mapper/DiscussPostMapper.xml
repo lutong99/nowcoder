@@ -8,7 +8,7 @@
       This element was generated on Sat Aug 12 21:31:59 CST 2023.
     -->
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -155,7 +155,7 @@
     insert into discuss_post (user_id, title, content, 
       type, status, create_time, 
       comment_count, score)
-    values (#{userId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+    values (#{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{commentCount,jdbcType=INTEGER}, #{score,jdbcType=DOUBLE})
   </insert>
@@ -245,7 +245,7 @@
         id = #{record.id,jdbcType=INTEGER},
       </if>
       <if test="record.userId != null" >
-        user_id = #{record.userId,jdbcType=VARCHAR},
+        user_id = #{record.userId,jdbcType=INTEGER},
       </if>
       <if test="record.title != null" >
         title = #{record.title,jdbcType=VARCHAR},
@@ -281,7 +281,7 @@
     -->
     update discuss_post
     set id = #{record.id,jdbcType=INTEGER},
-      user_id = #{record.userId,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=INTEGER},
       title = #{record.title,jdbcType=VARCHAR},
       content = #{record.content,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
@@ -302,7 +302,7 @@
     update discuss_post
     <set >
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
       <if test="title != null" >
         title = #{title,jdbcType=VARCHAR},
@@ -335,7 +335,7 @@
       This element was generated on Sat Aug 12 21:31:59 CST 2023.
     -->
     update discuss_post
-    set user_id = #{userId,jdbcType=VARCHAR},
+    set user_id = #{userId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},

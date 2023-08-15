@@ -1,12 +1,17 @@
 package org.example.nowcoder.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.User;
+import org.example.nowcoder.service.DiscussPostService;
 import org.example.nowcoder.service.FollowService;
 import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
@@ -15,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -26,6 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -45,6 +51,13 @@ public class UserController implements CommunityConstant, CommentConstant {
     private UserService userService;
     private LikeService likeService;
     private FollowService followService;
+
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    public void setDiscussPostService(DiscussPostService discussPostService) {
+        this.discussPostService = discussPostService;
+    }
 
     @Autowired
     public void setUserHostHolder(UserHostHolder userHostHolder) {
@@ -167,6 +180,39 @@ public class UserController implements CommunityConstant, CommentConstant {
         this.followService = followService;
     }
 
+
+    @GetMapping("/post/{userId}")
+    public String myPost(Model model, @PathVariable("userId") Integer userId,
+                         @RequestParam(value = "num", defaultValue = PAGE_OFFSET) Integer pageNum,
+                         @RequestParam(value = "size", defaultValue = PAGE_SIZE_POST) Integer pageSize
+    ) {
+        User user = userService.getById(userId);
+        if (user == null) {
+            throw new RuntimeException("查询的用户不存在");
+        }
+
+        List<Map<String, Object>> discussPostMapList = new ArrayList<>();
+        Page<DiscussPost> discussPostPage = PageHelper.startPage(pageNum, pageSize);
+        List<DiscussPost> postList = discussPostService.getAllByUserId(userId);
+        int postCount = discussPostService.getPostCountByUserId(userId);
+        if (postList != null) {
+            for (DiscussPost discussPost : postList) {
+                Map<String, Object> discussPostMap = new HashMap<>();
+                discussPostMap.put("post", discussPost);
+                Long likeCount = likeService.likeCount(ENTITY_TYPE_POST, discussPost.getId());
+                discussPostMap.put("likeCount", likeCount);
+
+                discussPostMapList.add(discussPostMap);
+            }
+        }
+        PageInfo<DiscussPost> pageInfo = new PageInfo<>(discussPostPage);
+
+        model.addAttribute("discussPostMapList", discussPostMapList);
+        model.addAttribute("profile", user);
+        model.addAttribute("postCount", postCount);
+        model.addAttribute("page", pageInfo);
+        return "site/my-post";
+    }
 
 
 }

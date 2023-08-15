@@ -20,4 +20,8 @@ public interface DiscussPostService extends DiscussPostConstant {
 
     int updateCommentCount(Integer id, Integer count);
 
+    List<DiscussPost> getAllByUserId(Integer userId);
+
+    int getPostCountByUserId(Integer userId);
+
 }
