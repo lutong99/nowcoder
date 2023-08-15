@@ -5,7 +5,7 @@ $(function () {
 function follow() {
     var btn = this;
     $.post(
-        CONTEXT_PATH + "/user/follow",
+        CONTEXT_PATH + "/follow",
         {"entityType": 3, "entityId": $(btn).prev().val()},
         function (data) {
             if (data.success) {

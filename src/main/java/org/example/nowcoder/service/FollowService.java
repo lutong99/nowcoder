@@ -2,6 +2,9 @@ package org.example.nowcoder.service;
 
 import org.example.nowcoder.constant.CommentConstant;
 
+import java.util.List;
+import java.util.Map;
+
 public interface FollowService extends CommentConstant {
 
 
@@ -23,9 +26,14 @@ public interface FollowService extends CommentConstant {
 
     /**
      * 用户有没有关注实体，查看实体的关注者中，有没有这个用户
+     *
      * @return {@code true} {@code userId} 用户 关注了{@code entity(entityType, entityId)}
-     *          {@code false} 用户没有关注
+     * {@code false} 用户没有关注
      */
     Boolean followStatus(Integer userId, Integer entityType, Integer entityId);
+
+    List<Map<String, Object>> getFollowers(Integer userId);
+
+    List<Map<String, Object>> getFollowees(Integer userId);
 
 }

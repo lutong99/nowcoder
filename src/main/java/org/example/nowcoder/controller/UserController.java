@@ -7,7 +7,6 @@ import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.User;
-import org.example.nowcoder.entity.vo.ApiResponse;
 import org.example.nowcoder.service.FollowService;
 import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
@@ -16,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -165,19 +167,6 @@ public class UserController implements CommunityConstant, CommentConstant {
         this.followService = followService;
     }
 
-    @PostMapping("/follow")
-    @ResponseBody
-    @LoginRequired
-    public ApiResponse follow(Integer entityType, Integer entityId) {
-        User user = userHostHolder.getUser();
-        boolean status = followService.followStatus(user.getId(), entityType, entityId);
-        if (status) {
-            followService.unfollow(user.getId(), entityType, entityId);
-            return ApiResponse.failure();
-        } else {
-            followService.follow(user.getId(), entityType, entityId);
-            return ApiResponse.success();
-        }
-    }
+
 
 }

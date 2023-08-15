@@ -1,6 +1,8 @@
 package org.example.nowcoder.service.impl;
 
+import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.FollowService;
+import org.example.nowcoder.service.UserService;
 import org.example.nowcoder.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -9,10 +11,19 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+
 @Service
 public class FollowServiceImpl implements FollowService {
 
     private RedisTemplate<String, Object> redisTemplate;
+
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Autowired
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
@@ -76,5 +87,41 @@ public class FollowServiceImpl implements FollowService {
         // 用户有没有关注实体，查看实体的关注者中，有没有这个用户
         String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
         return redisTemplate.opsForZSet().score(followerKey, userId) != null;
+    }
+
+    @Override
+    public List<Map<String, Object>> getFollowers(Integer userId) {
+        String followerKey = RedisKeyUtil.getFollowerKey(ENTITY_TYPE_USER, userId);
+        return getFollowMapList(followerKey);
+
+
+    }
+
+    @Override
+    public List<Map<String, Object>> getFollowees(Integer userId) {
+
+        String followeeKey = RedisKeyUtil.getFolloweeKey(userId, ENTITY_TYPE_USER);
+        return getFollowMapList(followeeKey);
+
+    }
+
+    private List<Map<String, Object>> getFollowMapList(String followeeKey) {
+        Set<Object> zSetElements = redisTemplate.opsForZSet().range(followeeKey, 0, -1);
+        List<Map<String, Object>> followerMapList = new ArrayList<>();
+
+        if (zSetElements == null) {
+            return null;
+        }
+
+        for (Object zSetElement : zSetElements) {
+            Map<String, Object> map = new HashMap<>();
+            Integer followerUserId = (Integer) zSetElement;
+            User followerUser = userService.getById(followerUserId);
+            map.put("user", followerUser);
+            Double timeMillis = redisTemplate.opsForZSet().score(followeeKey, zSetElement);
+            map.put("date", new Date(Objects.requireNonNull(timeMillis).longValue()));
+            followerMapList.add(map);
+        }
+        return followerMapList;
     }
 }
