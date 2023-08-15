@@ -97,6 +97,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
     @Override
     public int getPostCountByUserId(Integer userId) {
-        return getAllByUserId(userId).size();
+        List<DiscussPost> discussPostList = getAllByUserId(userId);
+        return discussPostList == null ? 0 : discussPostList.size();
     }
 }

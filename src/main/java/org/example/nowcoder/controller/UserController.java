@@ -9,12 +9,10 @@ import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.entity.Comment;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.User;
-import org.example.nowcoder.service.DiscussPostService;
-import org.example.nowcoder.service.FollowService;
-import org.example.nowcoder.service.LikeService;
-import org.example.nowcoder.service.UserService;
+import org.example.nowcoder.service.*;
 import org.example.nowcoder.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +51,13 @@ public class UserController implements CommunityConstant, CommentConstant {
     private FollowService followService;
 
     private DiscussPostService discussPostService;
+
+    private CommentService commentService;
+
+    @Autowired
+    public void setCommentService(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @Autowired
     public void setDiscussPostService(DiscussPostService discussPostService) {
@@ -168,6 +173,7 @@ public class UserController implements CommunityConstant, CommentConstant {
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followeeCount", followeeCount);
         model.addAttribute("followStatus", status);
+        model.addAttribute("tab", "profile");
 
         model.addAttribute("profile", profileUser);
         model.addAttribute("likeCount", likeCount);
@@ -211,8 +217,43 @@ public class UserController implements CommunityConstant, CommentConstant {
         model.addAttribute("profile", user);
         model.addAttribute("postCount", postCount);
         model.addAttribute("page", pageInfo);
+        model.addAttribute("tab", "post");
         return "site/my-post";
     }
 
+    @GetMapping("/reply/{userId}")
+    public String myReply(Model model, @PathVariable("userId") Integer userId,
+                          @RequestParam(value = "num", defaultValue = PAGE_OFFSET) Integer pageNum,
+                          @RequestParam(value = "size", defaultValue = PAGE_SIZE_POST) Integer pageSize
+    ) {
+
+        User user = userService.getById(userId);
+        if (user == null) {
+            throw new RuntimeException("查询的用户不存在");
+        }
+
+        int commentCount = commentService.getCountByUserId(userId);
+        Page<Comment> commentPage = PageHelper.startPage(pageNum, pageSize);
+        List<Comment> commentList = commentService.getListByUserId(userId);
+        List<Map<String, Object>> commentMapList = new ArrayList<>();
+        if (commentList != null) {
+            for (Comment comment : commentList) {
+                Map<String, Object> commentMap = new HashMap<>();
+                commentMap.put("comment", comment);
+                DiscussPost post = discussPostService.getById(commentService.getPostId(comment.getId()));
+                commentMap.put("post", post);
+                commentMapList.add(commentMap);
+            }
+        }
+        PageInfo<Comment> pageInfo = new PageInfo<>(commentPage);
+        model.addAttribute("commentMapList", commentMapList);
+        model.addAttribute("commentCount", commentCount);
+        model.addAttribute("page", pageInfo);
+        model.addAttribute("profile", user);
+        model.addAttribute("tab", "reply");
+
+        return "site/my-reply";
+
+    }
 
 }

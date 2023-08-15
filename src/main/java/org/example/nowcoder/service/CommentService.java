@@ -13,4 +13,12 @@ public interface CommentService extends CommentConstant {
 
     int addComment(Comment comment);
 
+    List<Comment> getListByUserId(Integer userId);
+
+    int getCountByUserId(Integer userId);
+
+    Integer getPostId(Integer id);
+
+    Comment getById(Integer id);
+
 }

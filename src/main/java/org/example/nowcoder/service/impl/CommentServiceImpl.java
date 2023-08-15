@@ -77,4 +77,41 @@ public class CommentServiceImpl implements CommentService {
         return insert;
     }
 
+    @Override
+    public List<Comment> getListByUserId(Integer userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("请求的参数不合法 userId");
+        }
+        CommentExample commentExample = new CommentExample();
+        commentExample.setOrderByClause("create_time desc");
+        commentExample.createCriteria().andUserIdEqualTo(userId);
+        return commentMapper.selectByExample(commentExample);
+    }
+
+    @Override
+    public int getCountByUserId(Integer userId) {
+        List<Comment> commentList
+                = getListByUserId(userId);
+        return commentList == null ? 0 : commentList.size();
+    }
+
+    @Override
+    public Integer getPostId(Integer id) {
+        Comment comment = getById(id);
+        if (comment == null) {
+            throw new IllegalArgumentException("输入的参数不合法 comment Id");
+        }
+        if (comment.getEntityType().equals(ENTITY_TYPE_POST)) {
+            return comment.getEntityId();
+        }
+        if (comment.getEntityType().equals(ENTITY_TYPE_COMMENT)) {
+            return getPostId(comment.getEntityId());
+        }
+        return null;
+    }
+
+    @Override
+    public Comment getById(Integer id) {
+        return commentMapper.selectByPrimaryKey(id);
+    }
 }
