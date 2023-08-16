@@ -1,4 +1,4 @@
-package org.example.nowcoder.interceptor;
+package org.example.nowcoder.component.interceptor;
 
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.LoginTicketConstant;

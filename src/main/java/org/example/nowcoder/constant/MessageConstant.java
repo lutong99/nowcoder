@@ -4,6 +4,8 @@ public interface MessageConstant {
 
     int STATUS_UNREAD = 0;
 
+    int STATUS_DEFAULT = STATUS_UNREAD;
+
     int STATUS_READ = 1;
 
     int STATUS_DELETED = 2;

@@ -29,4 +29,12 @@ public interface CommunityConstant {
 
     String PAGE_OFFSET = "1";
 
+    String TOPIC_LIKE = "like";
+    String TOPIC_COMMENT = "comment";
+    String TOPIC_FOLLOW = "follow";
+
+    String SYSTEM_USER = "SYSTEM";
+
+    Integer SYSTEM_USER_ID = 1;
+
 }

@@ -9,9 +9,11 @@ function follow() {
         {"entityType": 3, "entityId": $(btn).prev().val()},
         function (data) {
             if (data.success) {
+                // alert(data.message)
                 $(btn).text("取消关注").removeClass("btn-info").addClass("btn-secondary");
                 window.location.reload();
             } else {
+                // alert(data.message);
                 $(btn).text("关注TA").removeClass("btn-secondary").addClass("btn-info");
                 window.location.reload();
             }

@@ -11,8 +11,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 @Component
@@ -28,13 +26,16 @@ public class ServiceAspect {
     public void before(JoinPoint joinPoint) {
         // 用户【】在【】访问了【】
 
+        Signature signature = joinPoint.getSignature();
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        String method = signature.getDeclaringTypeName() + "." + signature.getName();
+        if (requestAttributes == null) {
+            log.info("不是通过Servlet访问了{}", method);
+            return;
+        }
         HttpServletRequest request = Objects.requireNonNull(requestAttributes).getRequest();
         String ipAddress = request.getRemoteHost();
-        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        Signature signature = joinPoint.getSignature();
-        String method = signature.getDeclaringTypeName() + "." + signature.getName();
-        log.info("用户【{}】在【{}】访问了【{}】", ipAddress, date, method);
+        log.info("用户【{}】访问了【{}】", ipAddress, method);
     }
 
 }

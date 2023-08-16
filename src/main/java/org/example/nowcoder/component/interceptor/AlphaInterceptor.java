@@ -1,4 +1,4 @@
-package org.example.nowcoder.interceptor;
+package org.example.nowcoder.component.interceptor;
 
 
 import lombok.extern.slf4j.Slf4j;

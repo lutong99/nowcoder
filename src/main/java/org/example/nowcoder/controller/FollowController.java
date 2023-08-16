@@ -2,7 +2,10 @@ package org.example.nowcoder.controller;
 
 import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
+import org.example.nowcoder.component.event.EventProducer;
 import org.example.nowcoder.constant.CommentConstant;
+import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.entity.Event;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.vo.ApiResponse;
 import org.example.nowcoder.service.FollowService;
@@ -19,13 +22,20 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class FollowController implements CommentConstant {
+public class FollowController implements CommentConstant, CommunityConstant {
 
     private UserHostHolder userHostHolder;
 
     private FollowService followService;
 
     private UserService userService;
+
+    private EventProducer eventProducer;
+
+    @Autowired
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -50,9 +60,16 @@ public class FollowController implements CommentConstant {
         boolean status = followService.followStatus(user.getId(), entityType, entityId);
         if (status) {
             followService.unfollow(user.getId(), entityType, entityId);
-            return ApiResponse.failure();
+            return ApiResponse.failure("取消关注成功");
         } else {
             followService.follow(user.getId(), entityType, entityId);
+            Event event = new Event();
+            event.setTopic(TOPIC_FOLLOW)
+                    .setUserId(user.getId())
+                    .setEntityId(entityId)
+                    .setEntityType(entityType)
+                    .setEntityUserId(entityId);
+            eventProducer.fireEvent(event);
             return ApiResponse.success();
         }
     }

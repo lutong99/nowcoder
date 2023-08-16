@@ -45,7 +45,7 @@
                         15:32:18</b>
                         <ul class="d-inline float-right">
                             <li class="d-inline ml-2">
-                                <a href="javascript:;" th:onclick="|like(this, 1, ${post.id}, ${user.id})|"
+                                <a href="javascript:;" th:onclick="|like(this, 1, ${post.id}, ${user.id}, ${post.id})|"
                                    class="text-primary"><span th:text="${likeStatus == 1 ? '已赞':'赞'}">赞</span> <i th:text="${likeCount}">11</i></a></li>
                             <li class="d-inline ml-2">|</li>
                             <li class="d-inline ml-2"><a href="#replyform" class="text-primary">回帖
@@ -99,7 +99,7 @@
                                     th:text="${#dates.format(postCommentMap.comment.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</b></span>
                             <ul class="d-inline float-right">
                                 <li class="d-inline ml-2">
-                                    <a href="javascript:;" th:onclick="|like(this, 2, ${postCommentMap.comment.id}, ${postCommentMap.comment.userId})|"
+                                    <a href="javascript:;" th:onclick="|like(this, 2, ${postCommentMap.comment.id}, ${postCommentMap.comment.userId}, ${post.id})|"
                                        class="text-primary"><span th:text="${postCommentMap.likeStatus == 1 ? '已赞' : '赞'}">赞</span>(<i th:text="${postCommentMap.likeCount}">1</i>)</a></li>
                                 <li class="d-inline ml-2">|</li>
                                 <li class="d-inline ml-2"><a href="#" class="text-primary">回复([[${postCommentMap.count}]])</a>
@@ -123,7 +123,7 @@
                                     <span th:text="${#dates.format(replyMap.comment.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-15 15:32:18</span>
                                     <ul class="d-inline float-right">
                                         <li class="d-inline ml-2">
-                                            <a href="javascript:;" th:onclick="|like(this, 2, ${replyMap.comment.id}, ${replyMap.comment.userId})|"
+                                            <a href="javascript:;" th:onclick="|like(this, 2, ${replyMap.comment.id}, ${replyMap.comment.userId}, ${post.id})|"
                                                class="text-primary"><span th:text="${replyMap.likeStatus == 1 ? '已赞' : '赞'}">赞</span>(<i th:text="${replyMap.likeCount}">1</i>)</a></li>
                                         <li class="d-inline ml-2">|</li>
                                         <li class="d-inline ml-2">

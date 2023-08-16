@@ -55,7 +55,7 @@ public class ApiResponse implements ApiResponseConstant {
     }
 
     public static ApiResponse failure(String message) {
-        return success(FAILURE_CODE, message);
+        return failure(FAILURE_CODE, message);
     }
 
     public ApiResponse data(String key, Object value) {

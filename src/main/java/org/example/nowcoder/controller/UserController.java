@@ -158,7 +158,6 @@ public class UserController implements CommunityConstant, CommentConstant {
     }
 
     @GetMapping("/profile/{userId}")
-    @LoginRequired
     public String profile(Model model, @PathVariable("userId") Integer userId) {
         User profileUser;
         if (userId == null) {

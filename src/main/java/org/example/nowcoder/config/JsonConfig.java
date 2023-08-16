@@ -1,6 +1,6 @@
 package org.example.nowcoder.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 public class JsonConfig {
 
     @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+    public Gson gson() {
+        return new Gson();
     }
 
 }

@@ -1,8 +1,8 @@
 package org.example.nowcoder.config;
 
-import org.example.nowcoder.interceptor.AlphaInterceptor;
-import org.example.nowcoder.interceptor.LoginRequiredInterceptor;
-import org.example.nowcoder.interceptor.LoginTicketInterceptor;
+import org.example.nowcoder.component.interceptor.AlphaInterceptor;
+import org.example.nowcoder.component.interceptor.LoginRequiredInterceptor;
+import org.example.nowcoder.component.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

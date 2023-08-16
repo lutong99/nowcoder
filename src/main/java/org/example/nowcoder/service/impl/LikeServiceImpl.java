@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,16 +34,11 @@ public class LikeServiceImpl implements LikeService {
         redisTemplate.execute(new SessionCallback<>() {
             @Override
             @SuppressWarnings("unchecked")
-            public Object execute(RedisOperations operations) throws DataAccessException {
+            public Object execute(@NonNull RedisOperations operations) throws DataAccessException {
                 String likeEntityKey = RedisKeyUtil.getLikeEntityKey(entityType, entityId);
                 String likeUserKey = RedisKeyUtil.getLikeUserKey(entityUserId);
                 boolean equals = Boolean.TRUE.equals(operations.opsForSet().isMember(likeEntityKey, userId));
                 operations.multi(); // 在multi() 事务中是不可以进行查询的
-//                System.out.println(Boolean.TRUE.equals(operations.opsForSet().isMember(likeEntityKey, userId)));
-//                System.out.println("userId = " + userId);
-//                System.out.println("entityType = " + entityType);
-//                System.out.println("entityId = " + entityId);
-//                System.out.println("entityUserId = " + entityUserId);
                 if (equals) {
                     // 如果已经点赞：则向里面移除一个数据，移除的是当前实体的点赞的用户id
                     // 还要改变用户的点赞数量
@@ -68,7 +64,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public int likeStatus(Integer userId, Integer entityType, Integer entityId) {
         String likeEntityKey = RedisKeyUtil.getLikeEntityKey(entityType, entityId);
-        return Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(likeEntityKey, userId)) ? 1 : 0;
+        return Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(likeEntityKey, userId)) ? LIKE_STATUS_LIKED : LIKE_STATUS_UNLIKED;
 
     }
 

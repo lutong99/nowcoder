@@ -14,5 +14,9 @@ public interface CommentConstant {
 
     Integer ENTITY_TYPE_USER = 3;
 
+    Integer LIKE_STATUS_LIKED = 1;
+
+    Integer LIKE_STATUS_UNLIKED = 0;
+
 
 }

@@ -3,7 +3,6 @@ package org.example.nowcoder.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.component.MailClient;
 import org.example.nowcoder.entity.LoginTicket;
-import org.example.nowcoder.entity.LoginTicketExample;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.UserExample;
 import org.example.nowcoder.mapper.UserMapper;
@@ -210,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(String ticket) {
-        LoginTicketExample example = new LoginTicketExample();
+//        LoginTicketExample example = new LoginTicketExample();
 //        example.createCriteria().andTicketEqualTo(ticket);
 //        LoginTicket loginTicket = new LoginTicket();
 //        loginTicket.setTicket(ticket);
@@ -218,7 +217,7 @@ public class UserServiceImpl implements UserService {
 //
 //        loginTicketMapper.updateByExampleSelective(loginTicket, example);
         String ticketRedisKey = RedisKeyUtil.getTicketKey(ticket);
-        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(ticket);
+        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(ticketRedisKey);
         if (loginTicket != null) {
             loginTicket.setStatus(INVALID_STATUS);
             redisTemplate.opsForValue().set(ticketRedisKey, loginTicket);
