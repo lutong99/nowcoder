@@ -1,6 +1,7 @@
 package org.example.nowcoder.component.event;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.example.nowcoder.constant.CommunityConstant;
@@ -22,11 +23,12 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
 
     private MessageService messageService;
 
-    private Gson gson;
+    
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Autowired
@@ -42,7 +44,13 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
             return;
         }
         Object value = consumerRecord.value();
-        Event event = gson.fromJson(String.valueOf(value), Event.class);
+//        Event event = objectMapper.convertValue(value, Event.class);
+        Event event = null;
+        try {
+            event = objectMapper.readValue(String.valueOf(value), Event.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         if (event == null) {
             log.error("消息转换事件错误");
@@ -61,7 +69,11 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
         contentMap.put("userId", event.getUserId());
         contentMap.putAll(event.getData());
 
-        message.setContent(gson.toJson(contentMap));
+        try {
+            message.setContent(objectMapper.writeValueAsString(contentMap));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         messageService.addMessage(message);
         log.info("消息处理完成，处理的消息类型是：{}", event.getTopic());

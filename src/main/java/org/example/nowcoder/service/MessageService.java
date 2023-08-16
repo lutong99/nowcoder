@@ -1,11 +1,12 @@
 package org.example.nowcoder.service;
 
+import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.constant.MessageConstant;
 import org.example.nowcoder.entity.Message;
 
 import java.util.List;
 
-public interface MessageService extends MessageConstant {
+public interface MessageService extends MessageConstant, CommunityConstant {
 
     List<Message> getConversations(Integer userId);
 
@@ -26,5 +27,21 @@ public interface MessageService extends MessageConstant {
 
     int readMessage(List<Integer> ids);
 
+    int readMessage(Integer id);
+
     int deleteMessage(Integer messageId);
+
+
+    Message getNewestNoticeByTopic(Integer userId, String topic);
+
+    int getNoticeCountByTopic(Integer userId, String topic);
+
+    int getNoticeUnreadCountByTopic(Integer userId, String topic);
+
+    int getNoticeUnreadCount(Integer userId);
+
+    List<Message> getNoticesByTopic(Integer userId, String topic);
+
+    int getMessageUnreadCount(Integer userId);
+
 }

@@ -1,6 +1,6 @@
 package org.example.nowcoder.component.interceptor;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
@@ -23,11 +23,12 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
 
     private UserHostHolder userHostHolder;
 
-    private Gson gson;
+
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Autowired
@@ -50,7 +51,7 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
                     response.setContentType("application/json; charset=utf-8");
                     PrintWriter writer = response.getWriter();
                     ApiResponse errorResponse = ApiResponse.failure("请先登录后再做操作");
-                    String errorResponseString = gson.toJson(errorResponse);
+                    String errorResponseString = objectMapper.writeValueAsString(errorResponse);
                     writer.write(errorResponseString);
                 } else {
                     log.info("未登录异步请求: {}", request.getRequestURI());

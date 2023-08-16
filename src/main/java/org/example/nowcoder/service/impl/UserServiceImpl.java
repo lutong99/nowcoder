@@ -128,10 +128,10 @@ public class UserServiceImpl implements UserService {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUsernameEqualTo(username);
         List<User> users = userMapper.selectByExample(userExample);
-        if (users == null || users.size() == 0) {
-            return null;
+        if (users.size() > 0) {
+            return users.get(0);
         }
-        return users.get(0);
+        return null;
     }
 
     @Override
@@ -139,10 +139,10 @@ public class UserServiceImpl implements UserService {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andEmailEqualTo(email);
         List<User> users = userMapper.selectByExample(userExample);
-        if (users == null || users.size() == 0) {
-            return null;
-        }
+        if (users.size() > 0) {
         return users.get(0);
+        }
+            return null;
     }
 
     @Override

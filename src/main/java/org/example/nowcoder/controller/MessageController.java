@@ -74,6 +74,8 @@ public class MessageController implements CommunityConstant, MessageConstant {
         model.addAttribute("messageUnreadCount", messageUnreadCount);
         model.addAttribute("page", pageInfo);
         model.addAttribute("tab", "message");
+        int noticeUnreadCount = messageService.getNoticeUnreadCount(user.getId());
+        model.addAttribute("noticeUnreadCount", noticeUnreadCount);
         return "site/letter";
 
     }
@@ -179,7 +181,6 @@ public class MessageController implements CommunityConstant, MessageConstant {
         } else {
             return userService.getById(userId0);
         }
-
     }
 
 }

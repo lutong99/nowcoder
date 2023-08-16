@@ -1,6 +1,6 @@
 package org.example.nowcoder.controller.advice;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.example.nowcoder.constant.ExceptionAdviceConstant;
 import org.example.nowcoder.entity.vo.ApiResponse;
@@ -19,11 +19,11 @@ import java.io.PrintWriter;
 public class ExceptionAdvice implements ExceptionAdviceConstant {
 
 
-    private Gson gson;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @ExceptionHandler
@@ -39,7 +39,7 @@ public class ExceptionAdvice implements ExceptionAdviceConstant {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter writer = response.getWriter();
             ApiResponse errorResponse = ApiResponse.failure("服务器内部异常");
-            String errorResponseString = gson.toJson(errorResponse);
+            String errorResponseString = objectMapper.writeValueAsString(errorResponse);
             writer.write(errorResponseString);
         } else {
             log.error("统一处理异常，同步请求");

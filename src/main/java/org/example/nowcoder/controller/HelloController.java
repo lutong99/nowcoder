@@ -75,7 +75,7 @@ public class HelloController {
 
     @RequestMapping(value = "/student/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public String student(@PathVariable(value = "id", required = true) String id) {
+    public String student(@PathVariable("id") String id) {
         System.out.println("id = " + id);
         return "Student" + id;
     }

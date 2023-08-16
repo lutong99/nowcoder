@@ -1,7 +1,8 @@
 package org.example.nowcoder.component.event;
 
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.example.nowcoder.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,12 @@ public class EventProducer {
 
     private KafkaTemplate kafkaTemplate;
 
-    private Gson gson;
+
+    private ObjectMapper objectMapper;
 
     @Autowired
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Autowired
@@ -34,7 +36,12 @@ public class EventProducer {
         }
 
         String topic = event.getTopic();
-        String data = gson.toJson(event);
+        String data = null;
+        try {
+            data = objectMapper.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         kafkaTemplate.send(topic, data);
     }

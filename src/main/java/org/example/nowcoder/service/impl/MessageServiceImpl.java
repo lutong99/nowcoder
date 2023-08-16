@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -43,7 +44,7 @@ public class MessageServiceImpl implements MessageService {
             return new ArrayList<>();
         } else {
             MessageExample messageExample = new MessageExample();
-            messageExample.setOrderByClause("create_time desc");
+            messageExample.setOrderByClause("status asc, create_time desc");
             messageExample.createCriteria().andIdIn(messageIds);
             return messageMapper.selectByExample(messageExample);
         }
@@ -64,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> getMessagesByConversationId(String conversationId) {
         MessageExample messageExample = new MessageExample();
-        messageExample.setOrderByClause("id desc");
+        messageExample.setOrderByClause("status asc, create_time desc");
         messageExample.createCriteria().andStatusNotEqualTo(STATUS_DELETED).andFromIdNotEqualTo(FROM_ID_SYSTEM)
                 .andConversationIdEqualTo(conversationId);
         return messageMapper.selectByExample(messageExample);
@@ -111,10 +112,67 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public int readMessage(Integer id) {
+        Message message = new Message();
+        message.setId(id);
+        message.setStatus(STATUS_READ);
+        return messageMapper.updateByPrimaryKeySelective(message);
+    }
+
+    @Override
     public int deleteMessage(Integer messageId) {
         Message message = new Message();
         message.setStatus(STATUS_DELETED);
         message.setId(messageId);
         return messageMapper.updateByPrimaryKeySelective(message);
+    }
+
+    @Override
+    public Message getNewestNoticeByTopic(Integer userId, String topic) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.setOrderByClause("status asc, create_time desc");
+        messageExample.createCriteria().andFromIdEqualTo(FROM_ID_SYSTEM).andToIdEqualTo(userId).andConversationIdEqualTo(topic).andStatusNotEqualTo(STATUS_DELETED);
+        List<Message> messageList = messageMapper.selectByExample(messageExample);
+        if (messageList.size() > 0) {
+            return messageList.get(0);
+        }
+        return null;
+
+    }
+
+    @Override
+    public int getNoticeCountByTopic(Integer userId, String topic) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andFromIdEqualTo(FROM_ID_SYSTEM).andToIdEqualTo(userId).andConversationIdEqualTo(topic).andStatusNotEqualTo(STATUS_DELETED);
+        return messageMapper.countByExample(messageExample);
+    }
+
+    @Override
+    public int getNoticeUnreadCountByTopic(Integer userId, String topic) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andFromIdEqualTo(FROM_ID_SYSTEM).andToIdEqualTo(userId).andConversationIdEqualTo(topic).andStatusEqualTo(STATUS_UNREAD);
+        return messageMapper.countByExample(messageExample);
+    }
+
+    @Override
+    public int getNoticeUnreadCount(Integer userId) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andFromIdEqualTo(FROM_ID_SYSTEM).andToIdEqualTo(userId).andConversationIdIn(Arrays.asList(TOPIC_COMMENT, TOPIC_FOLLOW, TOPIC_LIKE)).andStatusEqualTo(STATUS_UNREAD);
+        return messageMapper.countByExample(messageExample);
+    }
+
+    @Override
+    public List<Message> getNoticesByTopic(Integer userId, String topic) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.setOrderByClause("status asc, create_time desc");
+        messageExample.createCriteria().andFromIdEqualTo(FROM_ID_SYSTEM).andToIdEqualTo(userId).andConversationIdEqualTo(topic).andStatusNotEqualTo(STATUS_DELETED);
+        return messageMapper.selectByExample(messageExample);
+    }
+
+    @Override
+    public int getMessageUnreadCount(Integer userId) {
+        MessageExample messageExample = new MessageExample();
+        messageExample.createCriteria().andToIdEqualTo(userId).andStatusEqualTo(STATUS_UNREAD);
+        return messageMapper.countByExample(messageExample);
     }
 }
