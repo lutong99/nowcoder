@@ -4,11 +4,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.example.nowcoder.annotation.LoginRequired;
 import org.example.nowcoder.component.UserHostHolder;
+import org.example.nowcoder.component.event.EventProducer;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.entity.Comment;
 import org.example.nowcoder.entity.DiscussPost;
+import org.example.nowcoder.entity.Event;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.entity.vo.ApiResponse;
 import org.example.nowcoder.service.CommentService;
@@ -35,6 +38,13 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
     private CommentService commentService;
 
     private LikeService likeService;
+
+    private EventProducer eventProducer;
+
+    @Autowired
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
 
     @Autowired
     public void setLikeService(LikeService likeService) {
@@ -63,11 +73,9 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
 
     @PostMapping("/add")
     @ResponseBody
+    @LoginRequired
     public ApiResponse addDiscussPost(String title, String content) {
         User user = userHostHolder.getUser();
-        if (user == null) {
-            return ApiResponse.failure("还没有登录，请先登录");
-        }
 
         DiscussPost discussPost = new DiscussPost();
         discussPost.setTitle(title);
@@ -76,6 +84,14 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
         discussPost.setCreateTime(new Date());
 
         discussPostService.addDiscussPost(discussPost);
+
+        // 发布成功后存到ES中
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(discussPost.getId());
+        eventProducer.fireEvent(event);
 
         return ApiResponse.success("发布成功");
     }

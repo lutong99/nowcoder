@@ -11,17 +11,21 @@ function publish() {
         CONTEXT_PATH + "/discuss/add",
         {'title': title, 'content': content},
         function (data) {
-            // show info in the tip frame
-            $('#hintBody').text(data.message);
-            $("#hintModal").modal("show");
-            // hide in 2 seconds
-            setTimeout(function () {
-                $("#hintModal").modal("hide")
-                if (data.success) {
-                    // refresh page
-                    window.location.reload()
-                }
-            }, 2000);
+            if (data.success) {
+                // show info in the tip frame
+                $('#hintBody').text(data.message);
+                $("#hintModal").modal("show");
+                // hide in 2 seconds
+                setTimeout(function () {
+                    $("#hintModal").modal("hide")
+                    if (data.success) {
+                        // refresh page
+                        window.location.reload()
+                    }
+                }, 2000);
+            } else {
+                alert(data.message)
+            }
         }
     )
 

@@ -91,7 +91,8 @@
                     </div>
                 </li>
                 <li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="${followNoticeMap != null}">
-                    <span class="badge badge-danger" th:if="${followNoticeMap.unreadCount != 0}" th:text="${followNoticeMap.count}">3</span>
+                    <span class="badge badge-danger" th:if="${followNoticeMap.unreadCount != 0}"
+                          th:text="${followNoticeMap.count}">3</span>
                     <img src="http://static.nowcoder.com/images/head/follow.png" class="mr-4 user-header"
                          alt="通知图标">
                     <div class="media-body">
@@ -114,6 +115,13 @@
                     </div>
                 </li>
             </ul>
+
+            <div class="media-body"
+                 th:if="${commentNoticeMap == null && likeNoticeMap == null && followNoticeMap == null}">
+                <h6 class="mt-0 mb-3">您当前没有任何消息，点击返回 <a style="color: mediumpurple"
+                                                                     th:href="@{/user/profile/{userId}(userId=${loginUser.id})}">个人中心</a>
+                </h6>
+            </div>
         </div>
     </div>
 

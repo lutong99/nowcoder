@@ -31,7 +31,8 @@
                             [[${loginUser != null && loginUser.id == profile.id ? '我': 'TA'}]]的帖子</a>
                     </li>
                     <li class="nav-item">
-                        <a th:class="|nav-link ${tab == 'reply' ? 'active' : ''}|" th:href="@{/user/reply/{userId}(userId=${profile.id})}">
+                        <a th:class="|nav-link ${tab == 'reply' ? 'active' : ''}|"
+                           th:href="@{/user/reply/{userId}(userId=${profile.id})}">
                             [[${loginUser != null && loginUser.id == profile.id ? '我': 'TA'}]]的回复</a>
                     </li>
                 </ul>
@@ -57,6 +58,12 @@
                         </div>
                     </li>
                 </ul>
+                <div class="media-body" th:if="${commentMapList.size() == 0}">
+                    <h6 class="mt-0 mb-3">没有查找到任何相关回复，点击返回
+                        <a style="color: mediumpurple"
+                           th:href="@{/user/profile/{userId}(userId=${profile.id})}">
+                            [[${loginUser != null && loginUser.id == profile.id ? '我': 'TA'}]]的个人信息</a></h6>
+                </div>
                 <!-- 分页 -->
                 <nav class="mt-5">
                     <ul class="pagination justify-content-center">

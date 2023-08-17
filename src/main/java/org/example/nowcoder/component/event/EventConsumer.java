@@ -6,8 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.example.nowcoder.constant.CommunityConstant;
 import org.example.nowcoder.constant.MessageConstant;
+import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.Event;
 import org.example.nowcoder.entity.Message;
+import org.example.nowcoder.service.DiscussPostService;
+import org.example.nowcoder.service.ElasticsearchService;
 import org.example.nowcoder.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,8 +26,21 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
 
     private MessageService messageService;
 
-    
+
     private ObjectMapper objectMapper;
+
+    private DiscussPostService discussPostService;
+    private ElasticsearchService<DiscussPost> elasticsearchService;
+
+    @Autowired
+    public void setDiscussPostService(DiscussPostService discussPostService) {
+        this.discussPostService = discussPostService;
+    }
+
+    @Autowired
+    public void setElasticsearchService(ElasticsearchService<DiscussPost> elasticsearchService) {
+        this.elasticsearchService = elasticsearchService;
+    }
 
     @Autowired
     public void setObjectMapper(ObjectMapper objectMapper) {
@@ -78,6 +94,29 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
         messageService.addMessage(message);
         log.info("消息处理完成，处理的消息类型是：{}", event.getTopic());
 
+    }
+
+    @KafkaListener(topics = TOPIC_PUBLISH)
+    @SuppressWarnings("rawtypes")
+    public void handlePublish(ConsumerRecord consumerRecord) {
+        if (consumerRecord == null) {
+            log.error("传入的消息错误");
+            return;
+        }
+        Object value = consumerRecord.value();
+        Event event = null;
+        try {
+            event = objectMapper.readValue(String.valueOf(value), Event.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (event == null) {
+            log.error("消息转换事件错误");
+            return;
+        }
+        DiscussPost discussPost = discussPostService.getById(event.getEntityId());
+        elasticsearchService.save(discussPost);
     }
 
 }

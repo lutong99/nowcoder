@@ -33,6 +33,8 @@ public interface CommunityConstant {
     String TOPIC_COMMENT = "comment";
     String TOPIC_FOLLOW = "follow";
 
+    String TOPIC_PUBLISH = "publish";
+
     String SYSTEM_USER = "SYSTEM";
 
     Integer SYSTEM_USER_ID = 1;
