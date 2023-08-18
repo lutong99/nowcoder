@@ -11,6 +11,7 @@ import org.example.nowcoder.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -107,7 +108,7 @@ public class LoginController implements CommunityConstant {
 //        httpSession.setAttribute(CommunityConstant.KAPTCHA, text);
         String kaptchaOwner = CommunityUtil.generateUUID();
         Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
-        cookie.setMaxAge(60);
+        cookie.setMaxAge(60); // 存储60秒的凭证
         cookie.setPath(contextPath);
         response.addCookie(cookie);
         String kaptchaKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
@@ -136,8 +137,8 @@ public class LoginController implements CommunityConstant {
             kaptcha = (String) redisTemplate.opsForValue().get(kaptchaKey);
         }
 
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
-            model.addAttribute("codeMsg", "验证码不正确！");
+        if (!StringUtils.equalsIgnoreCase(code, kaptcha)) {
+            model.addAttribute("codeMsg", "验证码不正确或已失效！");
             return "site/login";
         }
 
@@ -162,6 +163,7 @@ public class LoginController implements CommunityConstant {
     @GetMapping("/logout")
     public String logout(Model model, @CookieValue("ticket") String ticket) {
         userService.logout(ticket);
+        SecurityContextHolder.clearContext();
         return "redirect:/login";
     }
 
@@ -180,18 +182,21 @@ public class LoginController implements CommunityConstant {
             return map;
         }
         map = userService.sendResetCode(email);
-        if (map.containsKey("verifyCode")) {
-            session.setAttribute("verifyCode", map.get("verifyCode"));
+        if (map.containsKey("verifyCode")) { // 发送成功
+            // 把验证码存储到redis数据库中，并设置失效时间
+            String verifyCodeKey = RedisKeyUtil.getVerifyCodeKey(email);
+            redisTemplate.opsForValue().set(verifyCodeKey, map.get("verifyCode"), 10, TimeUnit.MINUTES);
             map.remove("verifyCode");
         }
         return map;
     }
 
     @PostMapping("/reset")
-    public String resetPassword(Model model, HttpSession session, String email, String password, String code) {
-        // TODO: 把验证码存储到redis数据库中，并设置失效时间
-        String verifyCode = (String) session.getAttribute("verifyCode");
-        if (!StringUtils.equals(code, verifyCode)) {
+    public String resetPassword(Model model, String email, String password, String code) {
+
+        String verifyCodeKey = RedisKeyUtil.getVerifyCodeKey(email);
+        String verifyCode = String.valueOf(redisTemplate.opsForValue().get(verifyCodeKey));
+        if (!StringUtils.equalsIgnoreCase(code, verifyCode)) {
             model.addAttribute("codeMsg", "验证码不正确或已失效");
             return "site/forget";
         }
@@ -200,6 +205,8 @@ public class LoginController implements CommunityConstant {
         if (map.containsKey("successMsg")) {
             model.addAttribute(OPERATE_RESULT_MSG, map.get("successMsg"));
             model.addAttribute(OPERATE_RESULT_TARGET, "/login");
+            // 密码重置之后，取消认证信息
+            SecurityContextHolder.clearContext();
             return "site/operate-result";
         } else {
             model.addAttribute("emailMsg", map.get("emailMsg"));

@@ -4,6 +4,8 @@ $(function () {
 
 function follow() {
     var btn = this;
+    ajaxPreventCsrf();
+
     $.post(
         CONTEXT_PATH + "/follow",
         {"entityType": 3, "entityId": $(btn).prev().val()},

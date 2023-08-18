@@ -7,6 +7,8 @@ function publish() {
 
     let title = $("#recipient-name").val()
     let content = $("#message-text").val()
+    ajaxPreventCsrf();
+
     $.post(
         CONTEXT_PATH + "/discuss/add",
         {'title': title, 'content': content},

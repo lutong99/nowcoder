@@ -39,4 +39,8 @@ public interface CommunityConstant {
 
     Integer SYSTEM_USER_ID = 1;
 
+    String AUTHORITY_ADMIN = "ADMIN";
+    String AUTHORITY_USER = "USER";
+    String AUTHORITY_MODERATOR = "MODERATOR";
+
 }

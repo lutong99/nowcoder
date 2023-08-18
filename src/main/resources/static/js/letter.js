@@ -9,8 +9,9 @@ function send_letter() {
     let toName = $("#recipient-name").val()
     let content = $("#message-text").val()
 
-    console.log('toName', toName)
-    console.log('content', content)
+    // console.log('toName', toName)
+    // console.log('content', content)
+    ajaxPreventCsrf();
 
     $.post(
         CONTEXT_PATH + "/message/send",
@@ -31,6 +32,8 @@ function send_letter() {
 function delete_msg() {
     // TODO 删除数据
     let messageId = $(this).attr('message')
+    ajaxPreventCsrf();
+
     $.post(
         CONTEXT_PATH + '/message/hide',
         {'messageId': messageId},

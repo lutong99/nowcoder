@@ -1,5 +1,5 @@
 function like(button, entityType, entityId, entityUserId, postId) {
-
+    ajaxPreventCsrf();
     $.post(
         CONTEXT_PATH + "/like",
         {"entityType": entityType, "entityId": entityId, "entityUserId": entityUserId, "postId": postId},

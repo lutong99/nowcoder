@@ -100,5 +100,9 @@ public class HomeController implements CommunityConstant, CommentConstant {
         return "error/500";
     }
 
+    @GetMapping("/denied")
+    public String deniedPage() {
+        return "error/404";
+    }
 
 }

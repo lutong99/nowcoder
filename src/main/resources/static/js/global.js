@@ -33,3 +33,12 @@ window.alert = function(message) {
 	$(".alert-box .modal-body p").text(message);
 	$(".alert-box").modal("show");
 }
+
+function ajaxPreventCsrf() {
+	    let header = $("meta[name='_csrf_header']").attr("content")
+    let token = $("meta[name='_csrf']").attr("content")
+
+    $(document).ajaxSend(function (e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+}

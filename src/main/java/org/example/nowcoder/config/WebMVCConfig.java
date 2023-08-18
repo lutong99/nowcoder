@@ -1,7 +1,6 @@
 package org.example.nowcoder.config;
 
 import org.example.nowcoder.component.interceptor.AlphaInterceptor;
-import org.example.nowcoder.component.interceptor.LoginRequiredInterceptor;
 import org.example.nowcoder.component.interceptor.LoginTicketInterceptor;
 import org.example.nowcoder.component.interceptor.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +15,12 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
     private LoginTicketInterceptor loginTicketInterceptor;
 
-    private LoginRequiredInterceptor loginRequiredInterceptor;
 
     private MessageInterceptor messageInterceptor;
 
     @Autowired
     public void setMessageInterceptor(MessageInterceptor messageInterceptor) {
         this.messageInterceptor = messageInterceptor;
-    }
-
-    @Autowired
-    public void setLoginRequiredInterceptor(LoginRequiredInterceptor loginRequiredInterceptor) {
-        this.loginRequiredInterceptor = loginRequiredInterceptor;
     }
 
     @Autowired
@@ -47,10 +40,10 @@ public class WebMVCConfig implements WebMvcConfigurer {
                 .addPathPatterns("/register", "/login", "/user/**");
 
         registry.addInterceptor(loginTicketInterceptor).
-                excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+                excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.JPG", "/**/*.map", "/error");
 
-        registry.addInterceptor(loginRequiredInterceptor).
-                excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+        // loginRequiredInterceptor
+        // registry.addInterceptor(loginRequiredInterceptor).excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
         registry.addInterceptor(messageInterceptor).
                 excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");

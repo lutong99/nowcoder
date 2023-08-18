@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 
 @Component
 @Slf4j
+@Deprecated
 public class LoginRequiredInterceptor implements HandlerInterceptor {
 
     private UserHostHolder userHostHolder;

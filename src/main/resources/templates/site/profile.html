@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/global.css}"/>
@@ -31,7 +33,8 @@
                             [[${loginUser != null && loginUser.id == profile.id ? '我': 'TA'}]]的帖子</a>
                     </li>
                     <li class="nav-item">
-                        <a th:class="|nav-link ${tab == 'reply' ? 'active' : ''}|" th:href="@{/user/reply/{userId}(userId=${profile.id})}">
+                        <a th:class="|nav-link ${tab == 'reply' ? 'active' : ''}|"
+                           th:href="@{/user/reply/{userId}(userId=${profile.id})}">
                             [[${loginUser != null && loginUser.id == profile.id ? '我': 'TA'}]]的回复</a>
                     </li>
                 </ul>
@@ -53,7 +56,8 @@
 
                         <button type="button"
                                 th:class="|btn ${followStatus ? 'btn-secondary' : 'btn-info'} btn-sm float-right mr-5 follow-btn|"
-                                th:if="${loginUser != null && loginUser.id != profile.id}" th:text="${followStatus ? '取消关注' : '关注TA'}">
+                                th:if="${loginUser != null && loginUser.id != profile.id}"
+                                th:text="${followStatus ? '取消关注' : '关注TA'}">
                             关注TA
                         </button>
                     </h5>
@@ -64,7 +68,8 @@
                     <div class="text-muted mt-3 mb-5">
                         <span>关注了 <a class="text-primary" th:href="@{/followees/{userId}(userId=${profile.id})}"
                                         th:text="${followeeCount}">5</a> 人</span>
-                        <span class="ml-4">关注者 <a class="text-primary" th:href="@{/followers/{userId}(userId=${profile.id})}"
+                        <span class="ml-4">关注者 <a class="text-primary"
+                                                     th:href="@{/followers/{userId}(userId=${profile.id})}"
                                                      th:text="${followerCount}">123</a> 人</span>
                         <span class="ml-4">获得了 <i class="text-danger" th:text="${likeCount}">87</i> 个赞</span>
                     </div>

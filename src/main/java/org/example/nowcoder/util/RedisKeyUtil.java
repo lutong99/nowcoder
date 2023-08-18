@@ -13,6 +13,8 @@ public class RedisKeyUtil {
 
     private static final String PREFIX_KAPTCHA = "kaptcha";
 
+    private static final String PREFIX_VERIFY_CODE = "verify:code";
+
     private static final String PREFIX_TICKET = "login:ticket";
 
     private static final String PREFIX_USER = "user";
@@ -45,6 +47,10 @@ public class RedisKeyUtil {
 
     public static String getUserKey(Integer userId) {
         return PREFIX_USER + SPLIT + userId;
+    }
+
+    public static String getVerifyCodeKey(String email) {
+        return PREFIX_VERIFY_CODE + SPLIT + email;
     }
 
 }
