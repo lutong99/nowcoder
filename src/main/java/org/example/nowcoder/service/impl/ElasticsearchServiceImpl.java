@@ -7,6 +7,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.vo.PageInfo;
+import org.example.nowcoder.mapper.elasticsearch.DiscussPostRepository;
 import org.example.nowcoder.service.ElasticsearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +21,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ElasticsearchServiceImpl implements ElasticsearchService<DiscussPost> {
 
+    private DiscussPostRepository discussPostRepository;
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Autowired
+    public void setDiscussPostRepository(DiscussPostRepository discussPostRepository) {
+        this.discussPostRepository = discussPostRepository;
+    }
 
     @Autowired
     public void setElasticsearchRestTemplate(ElasticsearchRestTemplate elasticsearchRestTemplate) {
@@ -29,12 +36,17 @@ public class ElasticsearchServiceImpl implements ElasticsearchService<DiscussPos
 
     @Override
     public void save(DiscussPost t) {
-        elasticsearchRestTemplate.save(t);
+        discussPostRepository.save(t);
     }
 
     @Override
     public void delete(DiscussPost t) {
-        elasticsearchRestTemplate.delete(t);
+        discussPostRepository.delete(t);
+    }
+
+    @Override
+    public void delete(Integer postId) {
+        discussPostRepository.deleteById(postId);
     }
 
     public SearchHits<DiscussPost> search(NativeSearchQuery searchQuery) {

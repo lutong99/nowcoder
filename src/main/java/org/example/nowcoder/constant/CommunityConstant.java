@@ -32,6 +32,9 @@ public interface CommunityConstant {
     String TOPIC_LIKE = "like";
     String TOPIC_COMMENT = "comment";
     String TOPIC_FOLLOW = "follow";
+    String TOPIC_HIGHLIGHT = "highlight";
+    String TOPIC_TOP = "top";
+    String TOPIC_INVALID = "invalid";
 
     String TOPIC_PUBLISH = "publish";
 

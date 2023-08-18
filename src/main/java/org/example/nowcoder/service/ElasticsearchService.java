@@ -9,6 +9,8 @@ public interface ElasticsearchService<T> {
 
     void delete(T t);
 
+    void delete(Integer id);
+
     NativeSearchQuery getNativeSearchQuery(String keyword, int offset, int limit);
 
     PageInfo<T> getPageInfo(NativeSearchQuery query);

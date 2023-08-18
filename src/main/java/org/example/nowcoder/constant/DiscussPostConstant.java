@@ -9,7 +9,7 @@ public interface DiscussPostConstant {
     /**
      * 精华
      */
-    int STATUS_SPECIAL = 1;
+    int STATUS_HIGHLIGHT = 1;
     /**
      * 拉黑
      */

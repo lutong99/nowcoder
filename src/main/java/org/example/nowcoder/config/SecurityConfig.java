@@ -51,6 +51,15 @@ public class SecurityConfig implements CommunityConstant {
                     "/user/updatePassword"
             ).hasAnyAuthority(
                     AUTHORITY_USER, AUTHORITY_MODERATOR, AUTHORITY_ADMIN
+            ).antMatchers(
+                    "/discuss/top",
+                    "/discuss/highlight"
+            ).hasAnyAuthority(
+                    AUTHORITY_MODERATOR
+            ).antMatchers(
+                    "/discuss/delete"
+            ).hasAnyAuthority(
+                    AUTHORITY_ADMIN
             ).anyRequest().permitAll();
         });
 

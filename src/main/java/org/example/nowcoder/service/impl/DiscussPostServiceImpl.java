@@ -100,4 +100,21 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         List<DiscussPost> discussPostList = getAllByUserId(userId);
         return discussPostList == null ? 0 : discussPostList.size();
     }
+
+    @Override
+    public int updateStatus(Integer postId, Integer status) {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setId(postId);
+        discussPost.setStatus(status);
+        return discussPostMapper.updateByPrimaryKeySelective(discussPost);
+    }
+
+    @Override
+    public int updateType(Integer postId, Integer type) {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setId(postId);
+        discussPost.setType(type);
+
+        return discussPostMapper.updateByPrimaryKeySelective(discussPost);
+    }
 }

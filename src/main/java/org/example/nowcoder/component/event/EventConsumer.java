@@ -96,7 +96,7 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
 
     }
 
-    @KafkaListener(topics = TOPIC_PUBLISH)
+    @KafkaListener(topics = {TOPIC_PUBLISH, TOPIC_HIGHLIGHT, TOPIC_TOP})
     @SuppressWarnings("rawtypes")
     public void handlePublish(ConsumerRecord consumerRecord) {
         if (consumerRecord == null) {
@@ -117,6 +117,28 @@ public class EventConsumer implements CommunityConstant, MessageConstant {
         }
         DiscussPost discussPost = discussPostService.getById(event.getEntityId());
         elasticsearchService.save(discussPost);
+    }
+
+    @KafkaListener(topics = TOPIC_INVALID)
+    @SuppressWarnings("rawtypes")
+    public void handleDelete(ConsumerRecord consumerRecord) {
+        if (consumerRecord == null) {
+            log.error("传入的消息错误");
+            return;
+        }
+        Object value = consumerRecord.value();
+        Event event = null;
+        try {
+            event = objectMapper.readValue(String.valueOf(value), Event.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (event == null) {
+            log.error("消息转换事件错误");
+            return;
+        }
+        elasticsearchService.delete(event.getEntityId());
     }
 
 }

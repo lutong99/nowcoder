@@ -24,4 +24,8 @@ public interface DiscussPostService extends DiscussPostConstant {
 
     int getPostCountByUserId(Integer userId);
 
+    int updateStatus(Integer postId, Integer status);
+
+    int updateType(Integer postId, Integer type);
+
 }

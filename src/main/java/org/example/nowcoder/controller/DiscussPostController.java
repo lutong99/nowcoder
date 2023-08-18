@@ -9,6 +9,7 @@ import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.component.event.EventProducer;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
+import org.example.nowcoder.constant.DiscussPostConstant;
 import org.example.nowcoder.entity.Comment;
 import org.example.nowcoder.entity.DiscussPost;
 import org.example.nowcoder.entity.Event;
@@ -28,7 +29,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/discuss")
 @Slf4j
-public class DiscussPostController implements CommentConstant, CommunityConstant {
+public class DiscussPostController implements CommentConstant, DiscussPostConstant, CommunityConstant {
 
     private DiscussPostService discussPostService;
 
@@ -157,6 +158,59 @@ public class DiscussPostController implements CommentConstant, CommunityConstant
         PageInfo<Comment> pageInfo = new PageInfo<>(commentPage);
         model.addAttribute("page", pageInfo);
         return "site/discuss-detail";
+    }
 
+    /**
+     * 使精华
+     */
+    @PostMapping("/highlight")
+    public ApiResponse highlight(@RequestParam("postId") Integer postId) {
+        User user = userHostHolder.getUser();
+
+        discussPostService.updateStatus(postId, STATUS_HIGHLIGHT);
+        Event event = new Event()
+                .setTopic(TOPIC_HIGHLIGHT)
+                .setUserId(user.getId())
+                .setEntityId(postId)
+                .setEntityType(ENTITY_TYPE_POST);
+
+        eventProducer.fireEvent(event);
+        return ApiResponse.success();
+    }
+
+    /**
+     * 使置顶
+     */
+    @PostMapping("/top")
+    public ApiResponse top(@RequestParam("postId") Integer postId) {
+        User user = userHostHolder.getUser();
+        discussPostService.updateType(postId, TYPE_TOP);
+
+        Event event = new Event()
+                .setTopic(TOPIC_TOP)
+                .setUserId(user.getId())
+                .setEntityId(postId)
+                .setEntityType(ENTITY_TYPE_POST);
+
+        eventProducer.fireEvent(event);
+        return ApiResponse.success();
+    }
+
+    /**
+     * 删除帖子
+     */
+    @PostMapping("/delete")
+    public ApiResponse delete(@RequestParam("postId") Integer postId) {
+        User user = userHostHolder.getUser();
+        discussPostService.updateType(postId, STATUS_INVALID);
+
+        Event event = new Event()
+                .setTopic(TOPIC_INVALID)
+                .setUserId(user.getId())
+                .setEntityId(postId)
+                .setEntityType(ENTITY_TYPE_POST);
+
+        eventProducer.fireEvent(event);
+        return ApiResponse.success();
     }
 }

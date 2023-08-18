@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
@@ -23,8 +23,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-8">
-                    <h6><b class="square"></b> 来自 <i class="text-success"
-                                                       th:utext="${target.username}">落基山脉下的闲人</i> 的私信</h6>
+                    <h6><b class="square"></b> 来自
+                        <i class="text-success" th:utext="${target.username}">落基山脉下的闲人</i> 的私信</h6>
                 </div>
                 <div class="col-4 text-right">
                     <a type="button" class="btn btn-secondary btn-sm"
@@ -95,7 +95,8 @@
                             <strong class="mr-auto" th:utext="${messageMap.from.username}">落基山脉下的闲人</strong>
                             <small th:text="${#dates.format(messageMap.message.createTime, 'yyyy-MM-dd HH:mm:ss')}">2019-04-25
                                 15:49:32</small>
-                            <button type="button" class="ml-2 mb-1 close" th:message="${messageMap.message.id}" data-dismiss="toast" aria-label="Close">
+                            <button type="button" class="ml-2 mb-1 close" th:message="${messageMap.message.id}"
+                                    data-dismiss="toast" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
