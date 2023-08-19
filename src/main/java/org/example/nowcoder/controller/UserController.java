@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.example.nowcoder.annotation.LoginRequired;
+import org.example.nowcoder.component.FileUploadClient;
 import org.example.nowcoder.component.UserHostHolder;
 import org.example.nowcoder.constant.CommentConstant;
 import org.example.nowcoder.constant.CommunityConstant;
@@ -54,6 +55,17 @@ public class UserController implements CommunityConstant, CommentConstant {
 
     private CommentService commentService;
 
+    private FileUploadClient fileUploadClient;
+
+    @Value("${community.oss.header-prefix}")
+    private String headerPrefix;
+
+
+    @Autowired
+    public void setFileUploadClient(FileUploadClient fileUploadClient) {
+        this.fileUploadClient = fileUploadClient;
+    }
+
     @Autowired
     public void setCommentService(CommentService commentService) {
         this.commentService = commentService;
@@ -85,9 +97,10 @@ public class UserController implements CommunityConstant, CommentConstant {
         return "site/setting";
     }
 
-    @LoginRequired
-    @PostMapping("/upload")
-    public String uploadHeader(MultipartFile headerImage, Model model) {
+    //    @LoginRequired
+//    @PostMapping("/upload")
+    @Deprecated
+    public String uploadHeaderDeprecated(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
             log.error("请上传图片");
             throw new RuntimeException("请上传图片再进行操作");
@@ -115,7 +128,33 @@ public class UserController implements CommunityConstant, CommentConstant {
 
     }
 
+    @PostMapping("/upload")
+    public String uploadHeader(MultipartFile headerImage, Model model) {
+        if (headerImage == null) {
+            log.error("请上传图片");
+            throw new RuntimeException("请上传图片再进行操作");
+        }
+
+        String originalFilename = headerImage.getOriginalFilename();
+        if (!StringUtils.isBlank(originalFilename)) {
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String storeFileName = CommunityUtil.generateUUID() + extension;
+            String headerUrl = fileUploadClient.upload(headerImage, headerPrefix);
+            User user = userHostHolder.getUser();
+            userService.updateHeader(user.getId(), headerUrl);
+            return "redirect:/index";
+        } else {
+            model.addAttribute("error", "服务器未能读取成功文件");
+            return "site/setting";
+        }
+
+    }
+
+    /**
+     * 上传到云了之后这个获取方法就失效了
+     */
     @GetMapping("/header/{imageName}")
+    @Deprecated
     public void getHeaderImage(@PathVariable("imageName") String imageName, HttpServletResponse response) {
         if (imageName != null) {
             imageName = uploadPath + File.separator + imageName;

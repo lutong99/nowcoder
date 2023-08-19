@@ -61,11 +61,6 @@ spring:
     jdbc:
       initialize-schema: never
 
-
-
-
-
-
 mybatis:
   type-aliases-package: org.example.newcoder.entity
   configuration:
@@ -83,6 +78,9 @@ community:
   path:
     domain: http://localhost:8080
     upload: C:/usr/local/upload
+    wk:
+      image-path: C:/usr/local/upload/wk
+      command: C:/Program Files/wkhtmltopdf/bin/wkhtmltoimage
   sensitive:
     file:
       path: sensitive/words.copy.txt
@@ -99,5 +97,11 @@ community:
         length: 4
     noise:
       impl: com.google.code.kaptcha.impl.NoNoise
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    endpoint-without: oss-cn-beijing.aliyuncs.com
+    bucket-name: community-nowcoder
+    header-prefix: header/
+    share-prefix: share/images/
 
 

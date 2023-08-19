@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="icon" th:href="@{/images/logo_87_87.png}"/>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" crossorigin="anonymous">
@@ -172,7 +172,7 @@
                 </li>
             </ul>
             <!-- 分页 -->
-            <nav class="mt-5">
+            <nav class="mt-5" th:if="${tab == 'newest'}">
                 <ul class="pagination justify-content-center">
                     <li class="page-item">
                         <a class="page-link" href="#"
@@ -188,18 +188,46 @@
                         <a class="page-link" href="#"
                            th:href="@{/index(pageSize=${page.pageSize}, pageNum=${pageNum})}"
                         >[[${pageNum}]]</a></li>
-                    <!--                    <li class="page-item active"><a class="page-link" href="#">2</a></li>-->
-                    <!--                    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
-                    <!--                    <li class="page-item"><a class="page-link" href="#">4</a></li>-->
-                    <!--                    <li class="page-item"><a class="page-link" href="#">5</a></li>-->
-                    <li class="page-item"><a class="page-link" href="#"
-                                             th:href="@{/index(pageSize=${page.pageSize}, pageNum=${page.nextPage})}"
-                                             th:if="${page.hasNextPage}"
-                    >下一页</a></li>
-                    <li class="page-item"><a class="page-link" href="#"
-                                             th:if="${page.hasNextPage}"
-                                             th:href="@{/index(pageSize=${page.pageSize}, pageNum=${page.pages})}"
-                    >末页</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:href="@{/index(pageSize=${page.pageSize}, pageNum=${page.nextPage})}"
+                           th:if="${page.hasNextPage}"
+                        >下一页</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:if="${page.hasNextPage}"
+                           th:href="@{/index(pageSize=${page.pageSize}, pageNum=${page.pages})}"
+                        >末页</a></li>
+                </ul>
+            </nav>
+
+            <!-- 分页 -->
+            <nav class="mt-5" th:if="${tab == 'hot'}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:href="@{/hot}"
+                           th:unless="${page.isFirstPage}">首页</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:href="@{/hot(pageSize=${page.pageSize}, pageNum=${page.prePage})}"
+                           th:if="${page.hasPreviousPage}">上一页</a></li>
+
+                    <li class="page-item" th:class="${pageNum == page.pageNum ? 'page-item active': 'page-item'}"
+                        th:each="pageNum:${page.navigatepageNums}">
+                        <a class="page-link" href="#"
+                           th:href="@{/hot(pageSize=${page.pageSize}, pageNum=${pageNum})}"
+                        >[[${pageNum}]]</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:href="@{/hot(pageSize=${page.pageSize}, pageNum=${page.nextPage})}"
+                           th:if="${page.hasNextPage}"
+                        >下一页</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"
+                           th:if="${page.hasNextPage}"
+                           th:href="@{/hot(pageSize=${page.pageSize}, pageNum=${page.pages})}"
+                        >末页</a></li>
                 </ul>
             </nav>
         </div>

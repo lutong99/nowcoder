@@ -35,6 +35,7 @@ public interface CommunityConstant {
     String TOPIC_HIGHLIGHT = "highlight";
     String TOPIC_TOP = "top";
     String TOPIC_INVALID = "invalid";
+    String TOPIC_SHARE = "share";
 
     String TOPIC_PUBLISH = "publish";
 
