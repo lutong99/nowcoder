@@ -1,5 +1,6 @@
 package org.example.nowcoder.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.nowcoder.constant.DiscussPostConstant;
 import org.example.nowcoder.constant.UserConstant;
 import org.example.nowcoder.entity.DiscussPost;
@@ -22,6 +23,7 @@ import java.util.Date;
 
 @Service
 //@Scope("singleton")
+@Slf4j
 public class AlphaService {
 
     private AlphaDao alphaDao;
@@ -124,6 +126,16 @@ public class AlphaService {
             Integer.valueOf("1234j");
             return "success";
         });
+    }
+
+    //    @Async
+    public void testThreadPoolExecutor() {
+        log.debug("testThreadPoolExecutorSimple");
+    }
+
+    //    @Scheduled(initialDelay = 5000, fixedRate = 1000)
+    public void testScheduledThreadPoolExecutor() {
+        log.debug("testScheduledThreadPoolExecutor");
     }
 
 }

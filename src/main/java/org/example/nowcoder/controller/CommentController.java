@@ -13,7 +13,9 @@ import org.example.nowcoder.entity.Event;
 import org.example.nowcoder.entity.User;
 import org.example.nowcoder.service.CommentService;
 import org.example.nowcoder.service.DiscussPostService;
+import org.example.nowcoder.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,13 @@ public class CommentController implements CommunityConstant, CommentConstant {
     private EventProducer eventProducer;
 
     private DiscussPostService discussPostService;
+
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Autowired
     public void setDiscussPostService(DiscussPostService discussPostService) {
@@ -87,6 +96,9 @@ public class CommentController implements CommunityConstant, CommentConstant {
                     .setEntityType(ENTITY_TYPE_POST);
             eventProducer.fireEvent(publishEvent);
         }
+
+        String postScoreKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(postScoreKey, postId);
 
         return "redirect:/discuss/detail/" + postId;
     }

@@ -19,7 +19,9 @@ import org.example.nowcoder.service.CommentService;
 import org.example.nowcoder.service.DiscussPostService;
 import org.example.nowcoder.service.LikeService;
 import org.example.nowcoder.service.UserService;
+import org.example.nowcoder.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,13 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
     private LikeService likeService;
 
     private EventProducer eventProducer;
+
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     @Autowired
     public void setEventProducer(EventProducer eventProducer) {
@@ -93,6 +102,9 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
                 .setEntityType(ENTITY_TYPE_POST)
                 .setEntityId(discussPost.getId());
         eventProducer.fireEvent(event);
+
+        String postScoreKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(postScoreKey, discussPost.getId());
 
         return ApiResponse.success("发布成功");
     }
@@ -164,6 +176,7 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
      * 使精华
      */
     @PostMapping("/highlight")
+    @ResponseBody
     public ApiResponse highlight(@RequestParam("postId") Integer postId) {
         User user = userHostHolder.getUser();
 
@@ -173,8 +186,11 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
                 .setUserId(user.getId())
                 .setEntityId(postId)
                 .setEntityType(ENTITY_TYPE_POST);
-
         eventProducer.fireEvent(event);
+
+        String postScoreKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(postScoreKey, postId);
+
         return ApiResponse.success();
     }
 
@@ -182,6 +198,7 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
      * 使置顶
      */
     @PostMapping("/top")
+    @ResponseBody
     public ApiResponse top(@RequestParam("postId") Integer postId) {
         User user = userHostHolder.getUser();
         discussPostService.updateType(postId, TYPE_TOP);
@@ -200,6 +217,7 @@ public class DiscussPostController implements CommentConstant, DiscussPostConsta
      * 删除帖子
      */
     @PostMapping("/delete")
+    @ResponseBody
     public ApiResponse delete(@RequestParam("postId") Integer postId) {
         User user = userHostHolder.getUser();
         discussPostService.updateType(postId, STATUS_INVALID);

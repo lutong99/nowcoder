@@ -27,5 +27,18 @@ public class DateTests {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-}
+    }
+
+    @Test
+    public void testDates() throws Exception {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = simpleDateFormat.parse("2014-08-15 00:00:00");
+        long time = date.getTime();
+        Date epoch = new Date(time);
+        System.out.println("epoch = " + epoch);
+        System.out.println("time = " + time);
+
+        String format = simpleDateFormat.format(epoch);
+        System.out.println(format);
+    }
 }

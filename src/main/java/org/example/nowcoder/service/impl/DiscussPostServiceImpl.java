@@ -45,7 +45,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
     @Override
     public List<DiscussPost> getAllByHotDesc() {
         DiscussPostExample example = new DiscussPostExample();
-        example.setOrderByClause("type desc, comment_count desc");
+        example.setOrderByClause("type desc, score desc, create_time desc");
         return discussPostMapper.selectByExample(example);
     }
 
@@ -89,7 +89,7 @@ public class DiscussPostServiceImpl implements DiscussPostService {
 
         DiscussPostExample discussPostExample = new DiscussPostExample();
         discussPostExample.setOrderByClause("create_time desc");
-        DiscussPostExample.Criteria criteria = discussPostExample.createCriteria().andUserIdEqualTo(userId);
+        discussPostExample.createCriteria().andUserIdEqualTo(userId);
 
         return discussPostMapper.selectByExample(discussPostExample);
 
@@ -116,5 +116,10 @@ public class DiscussPostServiceImpl implements DiscussPostService {
         discussPost.setType(type);
 
         return discussPostMapper.updateByPrimaryKeySelective(discussPost);
+    }
+
+    @Override
+    public int updateById(DiscussPost post) {
+        return discussPostMapper.updateByPrimaryKeySelective(post);
     }
 }

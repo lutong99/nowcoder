@@ -23,6 +23,8 @@ public class RedisKeyUtil {
 
     private static final String PREFIX_DAU = "dau";
 
+    private static final String PREFIX_POST = "post";
+
     public static String getLikeEntityKey(Integer entityType, Integer entityId) {
         return PREFIX_LIKE_ENTITY + SPLIT + entityType + SPLIT + entityId;
     }
@@ -70,7 +72,13 @@ public class RedisKeyUtil {
     }
 
     public static String getDAUKey(String from, String end) {
-        return PREFIX_UV + SPLIT + from + SPLIT + end;
+        return PREFIX_DAU + SPLIT + from + SPLIT + end;
+
     }
+
+    public static String getPostScoreKey() {
+        return PREFIX_POST + SPLIT + "score";
+    }
+
 
 }

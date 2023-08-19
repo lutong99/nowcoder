@@ -15,8 +15,8 @@ function delete_event() {
         function (data) {
             if (!data.success) {
                 alert(data.message)
-            }else {
-                window.location.reload();
+            } else {
+                $("#deleteBtn").attr("disabled", "disabled");
             }
         }
     )
@@ -32,8 +32,8 @@ function highlight_event() {
         function (data) {
             if (!data.success) {
                 alert(data.message)
-            }else {
-                window.location.reload();
+            } else {
+                $("#highlightBtn").attr("disabled", "disabled");
             }
         }
     )
@@ -49,8 +49,8 @@ function top_event() {
         function (data) {
             if (!data.success) {
                 alert(data.message)
-            }else {
-                window.location.reload();
+            } else {
+                $("#topBtn").attr("disabled", "disabled");
             }
         }
     )

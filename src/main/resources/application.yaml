@@ -38,6 +38,33 @@ spring:
       group-id: community-consumer-group
   elasticsearch:
     uris: http://172.16.15.7:9200
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 100
+    scheduling:
+      pool:
+        size: 10
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org.quartz.scheduler.instanceId: AUTO
+      # springboot>2.5.6后使用这个 org.springframework.scheduling.quartz.LocalDataSourceJobStore，以前使用的 org.quartz.impl.jdbcjobstore.JobStoreTX
+      org.quartz.jobStore.class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+      org.quartz.jobStore.isClustered: true
+      org.quartz.threadPool.class: org.quartz.simpl.SimpleThreadPool
+      org.quartz.threadPool.threadCount: 5
+    scheduler-name: communityNowcoderScheduler
+    jdbc:
+      initialize-schema: never
+
+
+
+
+
 
 mybatis:
   type-aliases-package: org.example.newcoder.entity
@@ -72,3 +99,5 @@ community:
         length: 4
     noise:
       impl: com.google.code.kaptcha.impl.NoNoise
+
+

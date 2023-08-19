@@ -28,4 +28,6 @@ public interface DiscussPostService extends DiscussPostConstant {
 
     int updateType(Integer postId, Integer type);
 
+    int updateById(DiscussPost post);
+
 }
